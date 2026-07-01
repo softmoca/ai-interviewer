@@ -82,6 +82,10 @@
 | 질문 난이도 1~3 | `Question` | 생성 불변식. |
 | 오프닝 질문 여부 | `Question.isOpening()` | 상태 노출이 아닌 의미 있는 질의. |
 | 문답 role/followUp 일관성 | `QaLog` 생성(정적 팩터리) | 사용자 답변은 followUp 아님 등. |
+| 사용자 가입(필수값·비밀번호 암호화) | `User.register()` | 원문 비밀번호는 도메인에 남기지 않음. 암호화는 `PasswordEncryptor` 포트 위임(D22). |
+| 비밀번호 대조 인증 | `User.authenticate()` | 해시를 밖으로 노출하지 않고 사용자 객체가 판단(Tell, Don't Ask). |
+| 이메일 중복 여부 | 애플리케이션 `AuthService` | 저장소 조회 필요 → 애플리케이션 관심사. |
+| 토큰 발급/검증 | `TokenProvider` 포트(→ JWT 구현) | 인증 메커니즘(인프라). 도메인 밖(D22). |
 | **꼬리질문 "생성" 자체** | 애플리케이션 + `LlmClient` | 도메인 밖. 도메인은 검증된 결과만 받음. |
 | **LLM 응답 검증(구조/점수/필수값)** | 애플리케이션 계층 | 도메인 진입 **전** 방어(규칙 5, AP-9). |
 | 질문 풀 구성/프롬프트 조립 | 애플리케이션(질문 서비스 등) | 도메인 규칙 아님. |
@@ -101,9 +105,14 @@ com.aiinterviewer
 ├── domain/                     # 규칙의 소유자 (바깥을 모른다)
 │   ├── category/               # Category, CategoryPhase
 │   ├── question/               # Question
-│   ├── user/                   # User
+│   ├── user/                   # User, UserRepository, PasswordEncryptor(포트)
 │   ├── session/                # InterviewSession(애그리거트 루트), QaLog, SessionStatus, QaRole
 │   └── evaluation/             # Evaluation
+├── application/                # 유스케이스/오케스트레이션 (스프링 허용, 도메인 규칙은 위임)
+│   └── auth/                   # AuthService, TokenProvider(포트), LoginResult/MeResult, 예외
+├── adapter/                    # 바깥 세계 어댑터
+│   ├── web/                    # AuthController, 요청/응답 DTO, GlobalExceptionHandler
+│   └── security/               # JwtTokenProvider, BCryptPasswordEncryptor, JwtAuthenticationFilter, JwtProperties
 ├── llm/                        # 외부 지능 추상화 (도메인이 의존하지 않음)
 │   ├── LlmClient (interface)   # ← application이 여기에 의존 (DIP)
 │   ├── dto/                    # FollowUpResult, EvaluationResult (구조화 계약)
@@ -113,7 +122,9 @@ com.aiinterviewer
 ```
 
 - **Repository 인터페이스는 각 도메인 하위**에 둔다(그 개념의 영속화 계약).
-- 의존성 방향: `adapter/service → domain`, `service → llm(LlmClient)`, 구현(`llm/gemini`)은
-  인터페이스 뒤에 숨는다. **domain은 어떤 바깥도 import 하지 않는다**(§code-quality §1, §2 타협 제외).
-- 서비스/컨트롤러/DTO는 M2에서 각 개념 하위 또는 `application/`·`adapter/`에 추가하며,
-  추가 시 이 문서를 갱신한다(DoD).
+- **포트는 그것을 필요로 하는 안쪽 계층이 소유**한다: `PasswordEncryptor`는 domain(도메인
+  규칙이 씀), `TokenProvider`는 application(유스케이스가 씀). 구현은 `adapter/`에 격리(D22).
+- 의존성 방향: `adapter → application → domain`, `application → llm(LlmClient)`. 구현
+  (`adapter/*`, `llm/gemini`)은 인터페이스 뒤에 숨는다. **domain은 어떤 바깥도 import 하지
+  않는다**(code-quality §1, §2 타협 제외).
+- 세션/질문/평가의 서비스·컨트롤러도 같은 규칙으로 M2에서 추가하며, 추가 시 이 문서를 갱신(DoD).
