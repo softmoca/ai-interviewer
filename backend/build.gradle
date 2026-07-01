@@ -48,3 +48,11 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// 저장소 루트의 seed/*.json 을 클래스패스 seed/ 로 포함(단일 출처 유지, 결정사항 D24).
+// SeedDataLoader가 classpath:seed/*.json 을 읽어 카테고리/질문을 적재한다.
+tasks.named('processResources') {
+    from('../seed') {
+        into 'seed'
+    }
+}
