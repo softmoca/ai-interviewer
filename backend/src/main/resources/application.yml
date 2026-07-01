@@ -39,8 +39,10 @@ jwt:
 llm:
   provider: gemini
   gemini:
+    # 키는 backend/.env 의 GEMINI_API_KEY 로 주입(spring-dotenv). 없으면 빈 값 → LLM 호출만 비활성.
     api-key: ${GEMINI_API_KEY:}
     model: gemini-2.5-flash
+    base-url: https://generativelanguage.googleapis.com/v1beta
 
 logging:
   level:

@@ -37,6 +37,10 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
+    // .env 자동 로딩 — backend/.env 의 값을 Spring 환경으로 주입(결정사항 D26).
+    // 파일이 없어도 앱은 정상 기동한다(관대한 로더).
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
