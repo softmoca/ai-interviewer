@@ -1,0 +1,442 @@
+[
+  {
+    "category": "운영체제",
+    "topic": "운영체제 개요",
+    "content": "운영체제가 하는 핵심 역할은 무엇인가요?",
+    "difficulty": 1,
+    "keywords": ["자원 관리", "프로세스 관리", "메모리 관리", "사용자-하드웨어 인터페이스"],
+    "model_answer": "운영체제는 하드웨어와 응용 프로그램 사이의 중재자로서 프로세스 관리(스케줄링), 메모리 관리(할당·가상 메모리), 파일 시스템 관리, 입출력·장치 관리를 담당한다. 목표는 자원을 효율적으로 배분하고 사용자에게 편리한 인터페이스를 제공하는 것이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Operation%20System.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "운영체제 개요",
+    "content": "커널(Kernel)이 무엇이고, 사용자 모드와 커널 모드는 왜 구분하나요?",
+    "difficulty": 2,
+    "keywords": ["커널", "이중 모드(dual mode)", "특권 명령", "보호"],
+    "model_answer": "커널은 운영체제의 핵심으로 하드웨어 자원을 직접 제어하는 부분이다. 사용자 모드와 커널 모드를 구분하는 이유는, 응용 프로그램이 하드웨어나 다른 프로세스의 메모리에 직접 접근해 시스템을 손상시키는 것을 막기 위함이다. 특권 명령은 커널 모드에서만 실행되며, 사용자 프로그램은 시스템 콜을 통해서만 커널 기능을 요청할 수 있다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Operation%20System.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "프로세스와 스레드",
+    "content": "프로세스와 스레드의 차이를 설명해주세요.",
+    "difficulty": 1,
+    "keywords": ["실행 중인 프로그램", "독립된 주소 공간", "Code/Data/Heap/Stack", "Stack만 별도 할당", "자원 공유"],
+    "model_answer": "프로세스는 메모리에서 실행 중인 프로그램으로 Code/Data/Heap/Stack의 독립된 주소 공간을 할당받는다. 스레드는 프로세스 내 실행 흐름 단위로, Stack만 독립적으로 갖고 Code/Data/Heap 영역은 공유한다. 즉 프로세스는 고유 자원을 갖고, 스레드는 자원을 공유한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Process%20vs%20Thread.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "프로세스와 스레드",
+    "content": "스레드가 Stack만 별도로 할당받고 나머지는 공유하는 이유는 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["독립적 함수 호출", "지역변수/매개변수/리턴값", "실행 흐름 독립성"],
+    "model_answer": "스레드는 독립적인 실행 흐름을 가져야 하므로 함수를 독립적으로 호출할 수 있어야 한다. 함수의 매개변수·지역변수·리턴값을 담는 Stack은 실행 흐름마다 달라야 하므로 별도 할당한다. 반면 Code/Data/Heap은 공유해도 되므로 자원을 절약한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Process%20vs%20Thread.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "프로세스와 스레드",
+    "content": "프로세스의 상태(생성, 준비, 실행, 대기, 종료)가 어떻게 전이되는지 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["New/Ready/Running/Waiting/Terminated", "dispatch", "선점", "I/O 대기"],
+    "model_answer": "프로세스는 생성(New) 후 준비(Ready) 큐에 들어가고, 스케줄러가 선택하면 실행(Running) 상태가 된다. 실행 중 I/O 요청 등이 생기면 대기(Waiting) 상태로 가고, 완료되면 다시 준비 상태로 돌아온다. 타임 퀀텀 만료 등으로 선점되면 준비 상태로 내려가며, 작업이 끝나면 종료(Terminated)된다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Process%20vs%20Thread.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "멀티프로세스 vs 멀티스레드",
+    "content": "멀티프로세스와 멀티스레드의 장단점을 비교해주세요.",
+    "difficulty": 2,
+    "keywords": ["안정성", "메모리 침범", "오버헤드", "Context Switching", "공유 메모리"],
+    "model_answer": "멀티프로세스는 각 프로세스가 독립 메모리를 가져 하나가 죽어도 안전하지만, Context Switching 비용과 메모리 오버헤드가 크다. 멀티스레드는 메모리를 공유해 자원·시간 손실이 적지만, 한 스레드가 공유 데이터를 손상시키면 전체가 영향을 받아 안정성이 낮다. 이 문제는 Critical Section 동기화로 대비한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Process%20vs%20Thread.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "멀티프로세스 vs 멀티스레드",
+    "content": "멀티스레드가 항상 멀티프로세스보다 성능이 좋은가요?",
+    "difficulty": 3,
+    "keywords": ["동기화 비용", "공유 자원 경합", "안정성 트레이드오프", "GIL 등 언어 제약"],
+    "model_answer": "항상 그렇지는 않다. 멀티스레드는 Context Switching과 메모리 측면에서 유리하지만, 공유 자원 접근 시 동기화 비용과 경합이 커지면 오히려 느려질 수 있다. 또 한 스레드의 오류가 프로세스 전체를 죽일 수 있어 안정성이 중요한 경우 멀티프로세스가 낫고, 파이썬의 GIL처럼 언어·런타임 제약도 고려해야 한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Process%20vs%20Thread.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "Context Switching",
+    "content": "Context Switching이 무엇이고, 왜 오버헤드가 발생하나요?",
+    "difficulty": 2,
+    "keywords": ["상태 저장/복원", "PCB", "캐시 초기화", "TLB flush"],
+    "model_answer": "Context Switching은 실행 중인 프로세스의 상태를 저장하고 다음 프로세스의 상태를 복원하는 과정이다. 프로세스는 독립 메모리를 갖기 때문에 전환 시 캐시 메모리 초기화, TLB flush 등 무거운 작업이 필요해 오버헤드가 발생한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/PCB%20%26%20Context%20Switcing.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "Context Switching",
+    "content": "스레드 간 Context Switching이 프로세스 간 전환보다 비용이 적은 이유는 무엇인가요?",
+    "difficulty": 3,
+    "keywords": ["주소 공간 공유", "TLB/캐시 유지", "PCB vs TCB"],
+    "model_answer": "같은 프로세스의 스레드들은 Code/Data/Heap 등 주소 공간을 공유하므로, 스레드 전환 시 메모리 맵을 바꿀 필요가 없어 TLB와 캐시를 초기화하지 않아도 된다. 저장·복원할 컨텍스트도 레지스터와 스택 포인터 정도로 적어 프로세스 전환보다 비용이 작다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/PCB%20%26%20Context%20Switcing.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "PCB",
+    "content": "PCB(Process Control Block)에는 어떤 정보가 담기나요?",
+    "difficulty": 2,
+    "keywords": ["프로세스 상태", "PC(Program Counter)", "레지스터", "PID", "메모리 정보"],
+    "model_answer": "PCB는 OS가 프로세스를 관리하기 위한 자료구조로, 프로세스 상태, 프로그램 카운터, CPU 레지스터 값, PID, 메모리 관리 정보, 스케줄링 정보 등을 담는다. Context Switching 시 현재 프로세스 정보를 PCB에 저장하고 다음 프로세스의 PCB에서 복원한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/PCB%20%26%20Context%20Switcing.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "프로세스 주소 공간",
+    "content": "프로세스의 메모리 영역(Code, Data, Heap, Stack)을 각각 설명해주세요.",
+    "difficulty": 1,
+    "keywords": ["Code(명령)", "Data(전역/정적)", "BSS", "Heap(동적 할당)", "Stack(지역/매개변수)"],
+    "model_answer": "Code는 프로그램 명령이 저장되는 영역, Data는 전역·정적 변수(초기화되지 않은 것은 BSS) 영역, Heap은 malloc/new 등 동적 할당 영역, Stack은 지역변수·매개변수·리턴값이 저장되는 임시 영역이다. Heap은 낮은 주소에서 위로, Stack은 높은 주소에서 아래로 자란다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Process%20Address%20Space.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "프로세스 주소 공간",
+    "content": "Stack과 Heap이 서로 반대 방향으로 자라도록 배치하는 이유는 무엇인가요?",
+    "difficulty": 3,
+    "keywords": ["공간 효율", "충돌 방지", "동적 크기", "메모리 활용"],
+    "model_answer": "Stack과 Heap은 실행 중 크기가 동적으로 변하는 영역이다. 둘을 주소 공간의 양 끝에 두고 서로 마주 보는 방향으로 자라게 하면, 한쪽이 많이 필요하면 그만큼 공간을 쓰고 다른 쪽도 유연하게 확장할 수 있어 메모리를 효율적으로 활용한다. 둘이 만나면 stack overflow나 heap 부족이 발생한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Process%20Address%20Space.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "임계 구역 / 동기화",
+    "content": "임계 구역(Critical Section)이 무엇이고, 이를 해결하기 위한 조건 세 가지는 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["공유 데이터 접근 코드", "상호 배제(Mutual Exclusion)", "진행(Progress)", "한정 대기(Bounded Waiting)"],
+    "model_answer": "임계 구역은 여러 프로세스가 공유 데이터에 접근하는 코드 부분이다. 동시 접근 시 잘못된 결과가 생길 수 있어, 해결책은 상호 배제(한 번에 하나만 진입), 진행(진입할 프로세스 결정이 무한 연기되지 않음), 한정된 대기(대기 시간이 유한함)를 만족해야 한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Semaphore%20%26%20Mutex.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "임계 구역 / 동기화",
+    "content": "동기화 기법에는 어떤 것들이 있고 각각 어떤 상황에 쓰이나요?",
+    "difficulty": 2,
+    "keywords": ["뮤텍스", "세마포어", "모니터", "스핀락"],
+    "model_answer": "대표적으로 뮤텍스(상호 배제용 잠금), 세마포어(자원 개수 카운팅), 모니터(고수준 언어 차원 동기화, 자바의 synchronized), 스핀락(짧은 대기에 바쁜 대기로 락 획득) 등이 있다. 대기 시간이 짧으면 스핀락이 유리하고, 길면 블로킹 방식의 뮤텍스·세마포어가 낫다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Semaphore%20%26%20Mutex.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "세마포어와 뮤텍스",
+    "content": "세마포어와 뮤텍스의 차이를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["카운터(S)", "P/V 연산", "이진 세마포어", "lock/unlock", "소유 개념"],
+    "model_answer": "세마포어는 자원 개수(S)를 세는 카운터로 여러 개의 자원 접근을 제어하며 P(대기)·V(신호) 연산을 사용한다. 뮤텍스는 상호 배제를 위한 잠금 기법으로 lock/unlock을 사용하며 상태가 0/1인 이진 세마포어로 볼 수 있다. 핵심 차이는 뮤텍스는 락을 소유한 주체만 해제할 수 있는 '소유' 개념이 있고, 세마포어는 소유 개념 없이 카운팅으로 여러 자원을 다룬다는 점이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Semaphore%20%26%20Mutex.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "세마포어와 뮤텍스",
+    "content": "세마포어의 P 연산과 V 연산이 각각 어떤 동작을 하는지 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["P: 진입 전 S 감소/대기", "V: 진출 시 S 증가/깨움", "원자적 연산"],
+    "model_answer": "P 연산은 임계 구역 진입 전 수행하며, 자원 개수 S가 0이면 대기하고 그렇지 않으면 S를 1 감소시켜 진입한다. V 연산은 임계 구역을 나올 때 수행하며 S를 1 증가시켜 자원을 반납하고 대기 중인 프로세스를 깨운다. P/V는 인터럽트되지 않는 원자적 연산으로 상호 배제를 보장한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Semaphore%20%26%20Mutex.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "세마포어와 뮤텍스",
+    "content": "뮤텍스를 구현하는 소프트웨어 알고리즘(데커, 피터슨, 베이커리)의 개념을 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["데커 알고리즘", "피터슨 알고리즘(양보)", "베이커리 알고리즘(번호표)", "flag/turn"],
+    "model_answer": "데커 알고리즘은 flag와 turn 변수로 두 프로세스의 임계 구역 진입 순서를 조율한다. 피터슨 알고리즘은 데커와 유사하나 진입 전 상대에게 turn을 양보하는 점이 다르다. 베이커리 알고리즘은 여러 프로세스로 확장 가능하며, 가장 작은 번호표를 가진 프로세스가 먼저 진입하는 방식이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Semaphore%20%26%20Mutex.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "Race Condition",
+    "content": "Race Condition(경쟁 상태)이 무엇인지, 어떤 상황에서 발생하는지 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["공유 자원 동시 접근", "실행 순서 의존", "동기화 부재", "비결정적 결과"],
+    "model_answer": "Race Condition은 둘 이상의 프로세스/스레드가 공유 자원에 동시에 접근할 때, 실행 순서(타이밍)에 따라 결과가 달라지는 상태다. 예를 들어 두 스레드가 같은 변수를 읽고-증가-쓰기 할 때 순서가 엇갈리면 갱신이 유실된다. 동기화(락, 세마포어)로 임계 구역 접근을 제어해 방지한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Race%20Condition.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "Race Condition",
+    "content": "커널에서 Race Condition이 발생할 수 있는 상황과 대비책은 무엇인가요?",
+    "difficulty": 3,
+    "keywords": ["인터럽트 중첩", "선점형 커널", "전역 커널 자료구조", "인터럽트 비활성화/락"],
+    "model_answer": "커널이 전역 자료구조를 갱신하는 도중 인터럽트가 발생하거나, 선점형 커널에서 다른 프로세스가 같은 커널 코드에 진입하면 Race Condition이 생길 수 있다. 대비책으로 임계 구역 동안 인터럽트를 비활성화하거나, 커널 자료구조에 락(스핀락 등)을 걸어 상호 배제를 보장한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Race%20Condition.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "데드락",
+    "content": "데드락(Deadlock)이 발생하는 네 가지 필요조건을 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["상호 배제", "점유와 대기(Hold and Wait)", "비선점(No Preemption)", "순환 대기(Circular Wait)"],
+    "model_answer": "데드락은 상호 배제, 점유와 대기, 비선점, 순환 대기 네 조건이 모두 성립할 때 발생한다. 상호 배제는 자원을 한 번에 하나만 사용, 점유와 대기는 자원을 쥔 채 다른 자원을 기다림, 비선점은 강제로 빼앗을 수 없음, 순환 대기는 프로세스들이 원형으로 서로의 자원을 기다리는 상태다. 네 조건 중 하나라도 깨면 데드락을 예방할 수 있다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/DeadLock.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "데드락",
+    "content": "데드락을 처리하는 방법(예방, 회피, 탐지, 회복)에 대해 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["예방(Prevention)", "회피(Avoidance)/은행원 알고리즘", "탐지(Detection)", "회복(Recovery)"],
+    "model_answer": "예방은 데드락 4조건 중 하나를 성립하지 못하게 막는 방식이다. 회피는 자원 할당 시 안전 상태를 유지하도록 하는 방식으로 은행원 알고리즘이 대표적이다. 탐지는 데드락 발생을 허용하되 자원 할당 그래프 등으로 발견하고, 회복은 프로세스를 종료하거나 자원을 선점해 데드락을 푼다. 예방·회피는 비용이 커서 실무에서는 무시(타조 알고리즘)하기도 한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/DeadLock.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "데드락",
+    "content": "은행원 알고리즘(Banker's Algorithm)의 개념과 '안전 상태'가 무엇인지 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["안전 상태(safe state)", "안전 순서", "자원 요청 시뮬레이션", "회피"],
+    "model_answer": "은행원 알고리즘은 데드락 회피 기법으로, 프로세스가 자원을 요청할 때 그 요청을 들어줘도 시스템이 안전 상태를 유지할 수 있는지 먼저 시뮬레이션한다. 안전 상태란 모든 프로세스를 데드락 없이 완료시킬 수 있는 자원 할당 순서(안전 순서)가 존재하는 상태다. 안전 상태가 유지될 때만 자원을 할당한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/DeadLock.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "데드락",
+    "content": "데드락(Deadlock)과 기아 상태(Starvation)의 차이는 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["상호 대기", "무한 대기", "우선순위", "에이징"],
+    "model_answer": "데드락은 여러 프로세스가 서로가 가진 자원을 기다리며 아무도 진행하지 못하는 상호 교착 상태다. 기아는 특정 프로세스가 우선순위에 밀려 자원을 계속 얻지 못해 무한정 대기하는 상태로, 다른 프로세스들은 정상 진행한다. 기아는 에이징(대기 시간에 따라 우선순위 상승)으로 해결한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/DeadLock.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "CPU 스케줄링",
+    "content": "CPU 스케줄링에서 선점형과 비선점형의 차이를 설명하고, 각 예시를 들어주세요.",
+    "difficulty": 2,
+    "keywords": ["선점(Preemptive)", "비선점(Non-preemptive)", "FCFS/SJF", "RR/SRT/Priority"],
+    "model_answer": "비선점형은 실행 중인 프로세스가 CPU를 자발적으로 놓을 때까지 뺏지 않는 방식으로 FCFS, SJF가 있다. 선점형은 OS가 실행 중 프로세스로부터 CPU를 강제로 회수할 수 있는 방식으로 Round Robin, SRT, 선점형 Priority 스케줄링이 있다. 선점형은 응답성이 좋지만 Context Switching 비용이 증가한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/CPU%20Scheduling.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "CPU 스케줄링",
+    "content": "SJF 스케줄링의 장점과 문제점(기아 현상)에 대해 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["최단 작업 우선", "평균 대기시간 최소", "기아(Starvation)", "에이징(Aging)"],
+    "model_answer": "SJF(Shortest Job First)는 실행 시간이 가장 짧은 작업을 먼저 처리해 평균 대기 시간을 최소화한다. 하지만 실행 시간이 긴 프로세스는 계속 밀려 무한정 대기하는 기아 현상이 발생할 수 있다. 이를 해결하기 위해 대기 시간이 길수록 우선순위를 높이는 에이징(Aging) 기법을 쓴다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/CPU%20Scheduling.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "CPU 스케줄링",
+    "content": "라운드 로빈(Round Robin)에서 타임 퀀텀(Time Quantum) 크기가 성능에 어떤 영향을 주나요?",
+    "difficulty": 3,
+    "keywords": ["타임 퀀텀", "응답 시간", "Context Switching 오버헤드", "FCFS 근사"],
+    "model_answer": "타임 퀀텀이 너무 작으면 Context Switching이 잦아져 오버헤드가 커진다. 반대로 너무 크면 사실상 FCFS처럼 동작해 응답성이 떨어진다. 따라서 대부분의 작업이 한 퀀텀 안에 끝나되 전환 비용이 과하지 않은 적절한 크기를 선택해야 한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/CPU%20Scheduling.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "CPU 스케줄링",
+    "content": "장기/단기/중기 스케줄러의 역할을 각각 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["장기(job 스케줄러)", "단기(CPU 스케줄러)", "중기(swapping)", "멀티프로그래밍 정도"],
+    "model_answer": "장기 스케줄러는 어떤 작업을 메모리에 올릴지(준비 큐 진입)를 결정해 멀티프로그래밍 정도를 조절한다. 단기 스케줄러(CPU 스케줄러)는 준비 큐에서 실제 CPU를 할당할 프로세스를 자주 선택한다. 중기 스케줄러는 메모리가 부족할 때 프로세스를 디스크로 swap out/in 하여 부하를 조절한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/CPU%20Scheduling.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "인터럽트",
+    "content": "인터럽트(Interrupt)가 무엇이고, 폴링(Polling)과 어떤 차이가 있나요?",
+    "difficulty": 2,
+    "keywords": ["비동기 신호", "ISR(인터럽트 서비스 루틴)", "폴링(주기적 확인)", "CPU 효율"],
+    "model_answer": "인터럽트는 CPU가 작업 중일 때 입출력 완료·예외 등 처리가 필요한 사건이 발생하면 CPU에 알리는 비동기 신호다. CPU는 현재 상태를 저장하고 ISR을 실행한 뒤 복귀한다. 폴링은 CPU가 주기적으로 장치 상태를 직접 확인하는 방식으로 CPU 낭비가 크고, 인터럽트는 사건 발생 시에만 처리해 효율적이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Interrupt.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "인터럽트",
+    "content": "하드웨어 인터럽트와 소프트웨어 인터럽트(트랩)의 차이는 무엇인가요?",
+    "difficulty": 3,
+    "keywords": ["하드웨어 인터럽트(외부 장치)", "소프트웨어 인터럽트/트랩", "시스템 콜", "예외(Exception)"],
+    "model_answer": "하드웨어 인터럽트는 키보드·타이머·디스크 등 외부 장치가 발생시키는 비동기 신호다. 소프트웨어 인터럽트(트랩)는 프로그램 실행 중 발생하며, 시스템 콜 요청이나 0으로 나누기 같은 예외처럼 CPU 내부 명령 실행에 의해 동기적으로 발생한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Interrupt.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "시스템 콜",
+    "content": "시스템 콜(System Call)이 무엇이고, 왜 필요한가요?",
+    "difficulty": 2,
+    "keywords": ["커널 모드/사용자 모드", "OS 기능 요청", "모드 전환", "보호"],
+    "model_answer": "시스템 콜은 사용자 프로그램이 커널이 제공하는 기능(파일 입출력, 프로세스 생성 등)을 요청하는 인터페이스다. 사용자 모드에서는 하드웨어 자원에 직접 접근할 수 없기 때문에, 시스템 콜을 통해 커널 모드로 전환하여 안전하게 OS 기능을 사용한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/%5BOS%5D%20System%20Call%20(Fork%20Wait%20Exec).md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "시스템 콜",
+    "content": "fork(), exec(), wait() 시스템 콜이 각각 어떤 역할을 하는지 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["fork(프로세스 복제)", "exec(이미지 교체)", "wait(자식 종료 대기)", "부모/자식 프로세스"],
+    "model_answer": "fork()는 현재 프로세스를 복제해 자식 프로세스를 생성하며, 부모에게는 자식 PID를, 자식에게는 0을 반환한다. exec()는 현재 프로세스의 메모리 이미지를 새로운 프로그램으로 교체한다. wait()는 부모가 자식 프로세스의 종료를 기다리며, 이를 통해 좀비 프로세스를 회수한다. 보통 fork 후 자식에서 exec를 호출하는 패턴을 쓴다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/%5BOS%5D%20System%20Call%20(Fork%20Wait%20Exec).md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "IPC",
+    "content": "프로세스 간 통신(IPC)이 필요한 이유와 대표적인 방법을 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["독립 주소 공간", "공유 메모리", "메시지 패싱", "파이프/소켓/시그널"],
+    "model_answer": "프로세스는 독립된 주소 공간을 가지므로 서로의 메모리에 직접 접근할 수 없어, 데이터를 주고받으려면 IPC가 필요하다. 대표적으로 공유 메모리(빠르지만 동기화 필요), 메시지 패싱(파이프, 메시지 큐), 소켓(네트워크 통신), 시그널 등이 있다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/IPC(Inter%20Process%20Communication).md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "IPC",
+    "content": "공유 메모리 방식과 메시지 패싱 방식의 장단점을 비교해주세요.",
+    "difficulty": 3,
+    "keywords": ["공유 메모리(빠름/동기화 필요)", "메시지 패싱(안전/커널 개입)", "성능", "구현 복잡도"],
+    "model_answer": "공유 메모리는 두 프로세스가 같은 메모리 영역을 공유해 커널 개입이 적어 빠르지만, 동시 접근 제어(동기화)를 직접 구현해야 한다. 메시지 패싱은 커널을 통해 메시지를 주고받아 동기화가 자연스럽고 구현이 안전하지만, 매번 커널이 개입해 상대적으로 느리다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/IPC(Inter%20Process%20Communication).md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "페이징 / 세그먼테이션",
+    "content": "페이징(Paging)과 세그먼테이션(Segmentation)의 차이를 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["고정 크기 페이지", "가변 크기 세그먼트", "내부 단편화", "외부 단편화", "페이지 테이블"],
+    "model_answer": "페이징은 메모리를 고정 크기 페이지로 나눠 관리하는 방식으로 외부 단편화가 없지만 내부 단편화가 생길 수 있다. 세그먼테이션은 논리적 단위(코드, 데이터, 스택)로 가변 크기 세그먼트를 나누는 방식으로 내부 단편화는 없지만 외부 단편화가 발생한다. 페이징은 페이지 테이블, 세그먼테이션은 세그먼트 테이블로 주소를 변환한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Paging%20and%20Segmentation.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "페이징 / 세그먼테이션",
+    "content": "내부 단편화와 외부 단편화의 차이를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["내부 단편화(할당 내 낭비)", "외부 단편화(빈 공간 분산)", "고정/가변 분할"],
+    "model_answer": "내부 단편화는 고정 크기로 할당했을 때 실제 사용량보다 큰 공간을 줘서 할당 블록 내부에 남는 낭비 공간이다. 외부 단편화는 가변 크기 할당·해제가 반복되며 메모리 곳곳에 작은 빈 공간들이 흩어져, 총량은 충분해도 연속 공간이 없어 할당하지 못하는 현상이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Paging%20and%20Segmentation.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "페이징 / 세그먼테이션",
+    "content": "TLB(Translation Lookaside Buffer)가 무엇이고 왜 사용하나요?",
+    "difficulty": 3,
+    "keywords": ["주소 변환 캐시", "페이지 테이블 접근 감소", "메모리 접근 2회 문제"],
+    "model_answer": "페이징에서 논리 주소를 물리 주소로 변환하려면 페이지 테이블을 참조해야 하는데, 이는 메모리 접근이 한 번 더 필요해 느리다. TLB는 최근 사용한 페이지 번호-프레임 매핑을 담는 캐시로, TLB 히트 시 페이지 테이블을 거치지 않고 바로 주소를 변환해 성능을 높인다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Paging%20and%20Segmentation.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "가상 메모리",
+    "content": "가상 메모리와 요구 페이징(Demand Paging), 페이지 폴트(Page Fault)에 대해 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["실제 메모리보다 큰 주소 공간", "필요 시 적재", "페이지 폴트", "스와핑"],
+    "model_answer": "가상 메모리는 물리 메모리보다 큰 주소 공간을 프로세스에 제공하는 기법이다. 요구 페이징은 페이지를 미리 다 올리지 않고 실제로 참조될 때 메모리에 적재하는 방식이다. 참조한 페이지가 메모리에 없으면 페이지 폴트가 발생하고, OS가 디스크에서 해당 페이지를 메모리로 가져온다(스와핑).",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Memory.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "가상 메모리",
+    "content": "스래싱(Thrashing)이 무엇이고, 어떻게 완화할 수 있나요?",
+    "difficulty": 3,
+    "keywords": ["과도한 페이지 폴트", "CPU 이용률 급락", "워킹셋(Working Set)", "PFF(페이지 폴트 빈도)"],
+    "model_answer": "스래싱은 프로세스가 실제 작업보다 페이지 교체(page fault 처리)에 더 많은 시간을 쓰며 CPU 이용률이 급격히 떨어지는 현상이다. 멀티프로그래밍 정도가 과해 각 프로세스에 충분한 프레임이 없을 때 발생한다. 워킹셋 모델로 필요한 프레임을 보장하거나, 페이지 폴트 빈도(PFF)를 기준으로 프레임 수를 조절해 완화한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Memory.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "페이지 교체 알고리즘",
+    "content": "페이지 교체 알고리즘 중 LRU와 FIFO를 비교하고, Belady's Anomaly가 무엇인지 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["LRU(가장 오래 미사용)", "FIFO(먼저 들어온 것)", "Belady's Anomaly", "지역성(Locality)"],
+    "model_answer": "FIFO는 가장 먼저 적재된 페이지를 교체하는데, 프레임 수를 늘렸는데 오히려 페이지 폴트가 증가하는 Belady's Anomaly가 발생할 수 있다. LRU는 가장 오래 참조되지 않은 페이지를 교체하며 참조 지역성을 활용해 성능이 좋고 Belady's Anomaly가 없지만, 참조 시간 기록 비용이 든다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Page%20Replacement%20Algorithm.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "페이지 교체 알고리즘",
+    "content": "이론상 최적(Optimal) 페이지 교체 알고리즘은 무엇이며, 실제로 쓰이지 않는 이유는 무엇인가요?",
+    "difficulty": 3,
+    "keywords": ["앞으로 가장 늦게 참조", "미래 예측 불가", "성능 기준선", "LRU 근사"],
+    "model_answer": "최적 알고리즘(OPT)은 앞으로 가장 오랫동안 참조되지 않을 페이지를 교체하는 방식으로 페이지 폴트를 최소화한다. 하지만 미래의 참조를 미리 알 수 없어 실제 구현이 불가능하다. 따라서 성능 비교의 기준선으로만 쓰이며, 실무에서는 과거 참조로 미래를 근사하는 LRU를 사용한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Page%20Replacement%20Algorithm.md",
+    "is_opening": false
+  },
+  {
+    "category": "운영체제",
+    "topic": "캐시 / 지역성",
+    "content": "캐시의 지역성(Locality)에 대해 설명하고, 시간 지역성과 공간 지역성의 예를 들어주세요.",
+    "difficulty": 2,
+    "keywords": ["시간 지역성", "공간 지역성", "캐시 히트/미스", "반복문/배열 접근"],
+    "model_answer": "지역성은 프로그램이 메모리를 참조할 때 특정 부분에 집중되는 경향으로 캐시 효율의 근거다. 시간 지역성은 최근 참조한 데이터를 곧 다시 참조하는 성질(반복문 변수)이고, 공간 지역성은 참조한 위치 근처를 참조하는 성질(배열 순차 접근)이다. 지역성이 높을수록 캐시 히트율이 올라간다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/Memory.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "동기 / 비동기 · 블로킹 / 논블로킹",
+    "content": "동기/비동기와 블로킹/논블로킹의 차이를 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["제어권 반환 시점", "작업 완료 통보", "블로킹(제어권)", "동기(결과 관심)"],
+    "model_answer": "블로킹/논블로킹은 호출된 함수가 제어권을 바로 돌려주는지(논블로킹) 작업이 끝날 때까지 안 돌려주는지(블로킹)의 문제다. 동기/비동기는 작업 완료를 누가 신경 쓰는지의 문제로, 동기는 호출자가 결과를 직접 확인하고 비동기는 완료 시 콜백 등으로 통보받는다. 두 축은 독립적이라 논블로킹-동기 같은 조합도 존재한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/%5BNetwork%5D%20Blocking%2CNon-blocking%20%26%20Synchronous%2CAsynchronous.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "파일 시스템",
+    "content": "파일 시스템이 무엇이고, inode가 어떤 역할을 하나요?",
+    "difficulty": 2,
+    "keywords": ["파일 저장/관리 체계", "inode", "메타데이터", "블록 포인터"],
+    "model_answer": "파일 시스템은 저장 장치에 파일을 저장·관리하는 체계다. inode는 파일의 메타데이터(크기, 권한, 소유자, 시간)와 실제 데이터 블록의 위치를 가리키는 포인터를 담는 자료구조다. 파일 이름은 디렉터리에 inode 번호와 함께 저장되어, 이름과 데이터가 분리되므로 하드링크 같은 기능이 가능하다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/File%20System.md",
+    "is_opening": true
+  },
+  {
+    "category": "운영체제",
+    "topic": "파일 시스템",
+    "content": "파일에 접근할 때 inode를 통한 블록 접근 방식(직접/간접 블록)을 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["직접 블록", "단일/이중/삼중 간접 블록", "대용량 파일 지원"],
+    "model_answer": "inode는 데이터 블록 포인터를 여러 개 갖는데, 직접 블록 포인터는 데이터 블록을 바로 가리킨다. 파일이 커지면 단일 간접 블록(포인터들의 블록을 가리킴), 이중·삼중 간접 블록을 통해 계층적으로 더 많은 블록을 가리킬 수 있다. 이 구조로 작은 파일은 빠르게 접근하면서 대용량 파일도 지원한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Operating%20System/File%20System.md",
+    "is_opening": false
+  }
+]
