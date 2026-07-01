@@ -1,5 +1,6 @@
 package com.aiinterviewer.domain.question;
 
+import com.aiinterviewer.common.DomainGuard;
 import com.aiinterviewer.domain.category.Category;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -64,4 +65,27 @@ public class Question {
     /** 첫 질문(오프닝) 후보 여부 */
     @Column(nullable = false)
     private boolean opening;
+
+    private Question(Category category, String topic, String content, int difficulty,
+                     List<String> keywords, String modelAnswer, String sourceUrl, boolean opening) {
+        this.category = DomainGuard.requireNotNull(category, "category");
+        this.topic = DomainGuard.requireNotBlank(topic, "topic");
+        this.content = DomainGuard.requireNotBlank(content, "content");
+        this.difficulty = DomainGuard.requireInRange(difficulty, 1, 3, "difficulty");
+        this.keywords = keywords == null ? new ArrayList<>() : new ArrayList<>(keywords);
+        this.modelAnswer = modelAnswer;
+        this.sourceUrl = sourceUrl;
+        this.opening = opening;
+    }
+
+    /**
+     * 질문을 생성한다(seed 적재 등 생성 경로에서 사용). 난이도 1~3, 필수 텍스트를 강제한다
+     * (결정사항 D17). keywords는 방어적으로 복사한다.
+     */
+    public static Question of(Category category, String topic, String content, int difficulty,
+                              List<String> keywords, String modelAnswer, String sourceUrl,
+                              boolean opening) {
+        return new Question(category, topic, content, difficulty, keywords, modelAnswer, sourceUrl,
+                opening);
+    }
 }

@@ -1,5 +1,6 @@
 package com.aiinterviewer.domain.category;
 
+import com.aiinterviewer.common.DomainGuard;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -42,4 +43,16 @@ public class Category {
     /** 목록 노출 순서 */
     @Column(nullable = false)
     private int sortOrder;
+
+    private Category(String name, String slug, CategoryPhase phase, int sortOrder) {
+        this.name = DomainGuard.requireNotBlank(name, "name");
+        this.slug = DomainGuard.requireNotBlank(slug, "slug");
+        this.phase = DomainGuard.requireNotNull(phase, "phase");
+        this.sortOrder = sortOrder;
+    }
+
+    /** 카테고리를 생성한다(seed 적재 등 생성 경로에서 사용). 필수값이 비면 거부한다. */
+    public static Category of(String name, String slug, CategoryPhase phase, int sortOrder) {
+        return new Category(name, slug, phase, sortOrder);
+    }
 }
