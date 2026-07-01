@@ -32,6 +32,11 @@ dependencies {
 
     runtimeOnly 'com.h2database:h2'
 
+    // JWT (인증 토큰 발급/검증 — 결정사항 D21). API에만 컴파일 의존, 구현/직렬화는 런타임.
+    implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
