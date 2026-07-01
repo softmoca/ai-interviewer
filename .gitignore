@@ -1,6 +1,7 @@
 # ===== 비밀정보 (절대 커밋 금지) =====
 .env
 .env.*
+!.env.example
 *.pem
 **/application-secret.yml
 **/application-local.yml
@@ -28,6 +29,9 @@ yarn-error.log*
 .vscode/
 .DS_Store
 Thumbs.db
+
+# ===== Claude Code 로컬 설정 (개인/머신별) =====
+.claude/settings.local.json
 
 # ===== 기타 =====
 *.tmp

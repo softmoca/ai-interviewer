@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: ai-interviewer
+
+  # 개발 초기 DB: H2 인메모리 (PostgreSQL 호환 모드 — 문법 차이로 인한 사고 방지)
+  # 이후 로컬 Docker PostgreSQL -> AWS RDS 로 전환 (docs/아키텍처.md 3번)
+  datasource:
+    url: jdbc:h2:mem:aiinterviewer;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      # 개발 단계: 스키마 자동 생성. 운영 전환 시 validate/none 으로 조정.
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    open-in-view: false
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# LLM 연동 설정 (결정사항 D18)
+# - 개발용 프로바이더: Google Gemini (gemini-2.5-flash, 무료 티어)
+# - API 키는 절대 커밋 금지. .env / 환경변수(GEMINI_API_KEY)로만 주입.
+llm:
+  provider: gemini
+  gemini:
+    api-key: ${GEMINI_API_KEY:}
+    model: gemini-2.5-flash
+
+logging:
+  level:
+    org.hibernate.SQL: debug
