@@ -36,21 +36,58 @@ ai-interviewer/
 └── seed/       # 카테고리별 질문 데이터 (JSON)
 ```
 
+## 🚀 실행 (백엔드)
+
+사전 요구: **JDK 21**. (Gradle은 포함된 Wrapper 사용)
+
+**1) LLM 키 설정 (선택)** — 꼬리질문 기능을 쓰려면 `backend/.env` 파일을 만들고 키를 넣습니다:
+
+```dotenv
+GEMINI_API_KEY=발급받은_키
+```
+
+- `.env`는 커밋되지 않습니다(`.gitignore`). 예시는 [`backend/.env.example`](./backend/.env.example).
+- **키가 없어도 앱은 정상 실행**됩니다. 이 경우 꼬리질문 호출만 `503(LLM_NOT_CONFIGURED)`로 비활성됩니다.
+- 키 발급: Google AI Studio (Gemini API, 무료 티어). IntelliJ로 실행해도 `backend/.env`가 자동 로딩됩니다(spring-dotenv).
+
+**2) 서버 실행**
+
+```bash
+cd backend
+./gradlew bootRun
+```
+
+- 헬스체크: `GET http://localhost:8080/api/health`
+- H2 콘솔: `http://localhost:8080/h2-console`
+- 주요 API: `/api/auth/{signup,login,me}`, `/api/sessions` (설계는 [아키텍처](./docs/아키텍처.md) 참고)
+
+**3) 테스트**
+
+```bash
+cd backend && ./gradlew test
+```
+
+- 실제 Gemini를 호출하는 테스트는 **OS 환경변수로 키가 있을 때만** 실행됩니다(없으면 skip):
+  ```bash
+  GEMINI_API_KEY=... ./gradlew test --tests '*GeminiLlmClientLiveTest'
+  ```
+
 ## 📖 문서
 
 설계와 의사결정은 [`docs/`](./docs) 에 정리되어 있습니다.
 
-- [기획서](./docs/기획서.md)
-- [아키텍처](./docs/아키텍처.md)
-- [프롬프트 설계](./docs/프롬프트-설계.md)
+- [기획서](./docs/기획서.md) · [아키텍처](./docs/아키텍처.md) · [프롬프트 설계](./docs/프롬프트-설계.md)
+- [코드 품질 기준](./docs/code-quality-standards.md) · [도메인 설계](./docs/domain-design.md) · [테스트 전략](./docs/test-strategy.md)
 - [결정사항 (ADR)](./docs/결정사항.md)
 
 ## 🚧 개발 상태
 
-초기 세팅 및 기획 단계입니다. 로드맵은 기획서를 참고하세요.
+로드맵은 [기획서](./docs/기획서.md)를 참고하세요.
 
-- [x] 기획·설계 문서화
-- [x] 질문 데이터 수집 (운영체제)
-- [ ] 백엔드 뼈대 (인증/세션/LLM 연동)
-- [ ] 평가 리포트 + 프론트 연결 (MVP)
+- [x] 기획·설계 문서화 + 질문 데이터 수집 (운영체제)
+- [x] 백엔드 인증 (Spring Security + JWT)
+- [x] 세션 API + seed 제너릭 적재
+- [x] LLM 꼬리질문 (Gemini)
+- [ ] 세션 평가 리포트
+- [ ] 프론트엔드 연결 (MVP)
 - [ ] 음성 입력, 카테고리 확장, 소셜 로그인
