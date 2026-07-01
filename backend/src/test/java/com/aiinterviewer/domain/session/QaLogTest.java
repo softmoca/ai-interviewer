@@ -53,6 +53,22 @@ class QaLogTest {
         });
     }
 
+    @Test
+    @DisplayName("followUp: 면접관 발화 + 출처 질문 없음 + 꼬리질문 표시")
+    void followUp() {
+        InterviewSession session = new InterviewSession();
+
+        QaLog log = QaLog.followUp(session, "그렇다면 컨텍스트 스위칭 비용은?", 3);
+
+        assertSoftly(softly -> {
+            softly.assertThat(log.getRole()).isEqualTo(QaRole.INTERVIEWER);
+            softly.assertThat(log.getQuestion()).isNull();
+            softly.assertThat(log.isFollowUp()).isTrue();
+            softly.assertThat(log.getContent()).isEqualTo("그렇다면 컨텍스트 스위칭 비용은?");
+            softly.assertThat(log.getSeq()).isEqualTo(3);
+        });
+    }
+
     @Nested
     @DisplayName("생성 거부")
     class Rejects {

@@ -17,4 +17,7 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     /** 선택 카테고리들의 오프닝 후보 조회 */
     List<Question> findByCategoryIdInAndOpeningTrue(Collection<Long> categoryIds);
+
+    /** 선택 카테고리들의 전체 질문 조회 — 꼬리질문 프롬프트의 참고 질문 풀에 사용 */
+    List<Question> findByCategoryIdIn(Collection<Long> categoryIds);
 }

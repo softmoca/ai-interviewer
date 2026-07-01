@@ -76,4 +76,9 @@ public class QaLog {
     public static QaLog userAnswer(InterviewSession session, String content, int seq) {
         return new QaLog(session, null, QaRole.USER, content, false, seq);
     }
+
+    /** LLM이 생성한 꼬리질문 로그. 면접관 발화이며 출처 질문(DB)이 없다. */
+    public static QaLog followUp(InterviewSession session, String content, int seq) {
+        return new QaLog(session, null, QaRole.INTERVIEWER, content, true, seq);
+    }
 }
