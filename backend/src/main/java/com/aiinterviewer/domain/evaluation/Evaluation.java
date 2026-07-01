@@ -28,6 +28,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Evaluation {
 
+    /** 평가 점수는 5점 척도(결정사항 D10). 도메인이 범위를 강제한다. */
+    private static final int MIN_SCORE = 1;
+    private static final int MAX_SCORE = 5;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -62,4 +66,34 @@ public class Evaluation {
     /** 세션 전반 총평 (세션당 한 건에만 채워질 수 있음 — docs/아키텍처.md evaluation) */
     @Column(columnDefinition = "TEXT")
     private String overallComment;
+
+    private Evaluation(InterviewSession session, String concept, int accuracyScore, int depthScore,
+                       List<String> missedKeywords, String modelAnswer, String overallComment) {
+        this.session = session;
+        this.concept = concept;
+        this.accuracyScore = requireInScoreRange(accuracyScore, "accuracy");
+        this.depthScore = requireInScoreRange(depthScore, "depth");
+        this.missedKeywords = missedKeywords == null ? new ArrayList<>() : new ArrayList<>(missedKeywords);
+        this.modelAnswer = modelAnswer;
+        this.overallComment = overallComment;
+    }
+
+    /**
+     * 검증된 평가 한 건을 생성한다. 점수는 1~5 범위를 강제하므로, 검증되지 않은 LLM 점수가
+     * 그대로 저장되는 것을 도메인 경계에서 막는다(규칙 5, AP-9 방지).
+     */
+    public static Evaluation of(InterviewSession session, String concept, int accuracyScore,
+                                int depthScore, List<String> missedKeywords, String modelAnswer,
+                                String overallComment) {
+        return new Evaluation(session, concept, accuracyScore, depthScore, missedKeywords,
+                modelAnswer, overallComment);
+    }
+
+    private static int requireInScoreRange(int score, String field) {
+        if (score < MIN_SCORE || score > MAX_SCORE) {
+            throw new IllegalArgumentException(
+                    "%s 점수는 %d~%d 범위여야 합니다: %d".formatted(field, MIN_SCORE, MAX_SCORE, score));
+        }
+        return score;
+    }
 }

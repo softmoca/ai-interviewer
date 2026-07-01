@@ -63,4 +63,28 @@ public class InterviewSession extends BaseTimeEntity {
     private LocalDateTime startedAt;
 
     private LocalDateTime endedAt;
+
+    // --- 도메인 행위: 상태 전이 규칙은 세션이 소유한다 (domain-design.md §3, AP-1/AP-2 방지) ---
+
+    /** 세션을 정상 종료한다. 진행 중일 때만 허용한다(상태 전이 불변식). */
+    public void complete(LocalDateTime endedAt) {
+        finish(SessionStatus.COMPLETED, endedAt);
+    }
+
+    /** 세션을 중단 처리한다. 진행 중일 때만 허용한다. */
+    public void abandon(LocalDateTime endedAt) {
+        finish(SessionStatus.ABANDONED, endedAt);
+    }
+
+    public boolean isInProgress() {
+        return this.status == SessionStatus.IN_PROGRESS;
+    }
+
+    private void finish(SessionStatus target, LocalDateTime endedAt) {
+        if (!isInProgress()) {
+            throw new IllegalStateException("진행 중인 세션만 종료할 수 있습니다. 현재 상태=" + this.status);
+        }
+        this.status = target;
+        this.endedAt = endedAt;
+    }
 }
