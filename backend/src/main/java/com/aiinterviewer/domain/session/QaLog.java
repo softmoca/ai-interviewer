@@ -1,5 +1,6 @@
 package com.aiinterviewer.domain.session;
 
+import com.aiinterviewer.common.DomainGuard;
 import com.aiinterviewer.domain.question.Question;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -54,4 +55,25 @@ public class QaLog {
     /** 세션 내 순서 */
     @Column(nullable = false)
     private int seq;
+
+    private QaLog(InterviewSession session, Question question, QaRole role, String content,
+                  boolean followUp, int seq) {
+        this.session = DomainGuard.requireNotNull(session, "session");
+        this.question = question;
+        this.role = role;
+        this.content = DomainGuard.requireNotBlank(content, "content");
+        this.followUp = followUp;
+        this.seq = DomainGuard.requireInRange(seq, 1, Integer.MAX_VALUE, "seq");
+    }
+
+    /** DB에서 꺼낸 오프닝(첫 질문) 로그. 면접관 발화이며 꼬리질문이 아니다. */
+    public static QaLog opening(InterviewSession session, Question question, int seq) {
+        DomainGuard.requireNotNull(question, "question");
+        return new QaLog(session, question, QaRole.INTERVIEWER, question.getContent(), false, seq);
+    }
+
+    /** 사용자 답변 로그. 출처 질문이 없고 꼬리질문이 아니다. */
+    public static QaLog userAnswer(InterviewSession session, String content, int seq) {
+        return new QaLog(session, null, QaRole.USER, content, false, seq);
+    }
 }

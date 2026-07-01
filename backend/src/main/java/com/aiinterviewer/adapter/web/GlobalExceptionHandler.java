@@ -2,6 +2,11 @@ package com.aiinterviewer.adapter.web;
 
 import com.aiinterviewer.application.auth.AuthenticationFailedException;
 import com.aiinterviewer.application.auth.DuplicateEmailException;
+import com.aiinterviewer.application.session.CategoryNotFoundException;
+import com.aiinterviewer.application.session.NoAvailableQuestionException;
+import com.aiinterviewer.application.session.SessionAccessDeniedException;
+import com.aiinterviewer.application.session.SessionNotFoundException;
+import com.aiinterviewer.application.session.SessionNotInProgressException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -29,6 +34,26 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAuthenticationFailed(AuthenticationFailedException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse("AUTHENTICATION_FAILED", e.getMessage()));
+    }
+
+    @ExceptionHandler({SessionNotFoundException.class, CategoryNotFoundException.class,
+            NoAvailableQuestionException.class})
+    public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse("NOT_FOUND", e.getMessage()));
+    }
+
+    @ExceptionHandler(SessionAccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleSessionAccessDenied(SessionAccessDeniedException e) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse("ACCESS_DENIED", e.getMessage()));
+    }
+
+    /** 진행 중 아님 등 상태 충돌(세션 재종료 IllegalStateException 포함) → 409. */
+    @ExceptionHandler({SessionNotInProgressException.class, IllegalStateException.class})
+    public ResponseEntity<ErrorResponse> handleConflict(RuntimeException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse("CONFLICT", e.getMessage()));
     }
 
     /** 요청 바디 검증 실패(@Valid). 첫 위반 메시지를 대표로 담는다. */

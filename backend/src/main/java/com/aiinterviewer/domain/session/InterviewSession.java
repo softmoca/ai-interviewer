@@ -1,6 +1,7 @@
 package com.aiinterviewer.domain.session;
 
 import com.aiinterviewer.common.BaseTimeEntity;
+import com.aiinterviewer.common.DomainGuard;
 import com.aiinterviewer.domain.user.User;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -63,6 +64,36 @@ public class InterviewSession extends BaseTimeEntity {
     private LocalDateTime startedAt;
 
     private LocalDateTime endedAt;
+
+    private InterviewSession(User user, Set<Long> categoryIds, boolean randomAll,
+                             Integer questionCount, Integer difficulty, LocalDateTime startedAt) {
+        this.user = DomainGuard.requireNotNull(user, "user");
+        this.randomAll = randomAll;
+        this.categoryIds = categoryIds == null ? new HashSet<>() : new HashSet<>(categoryIds);
+        if (!randomAll && this.categoryIds.isEmpty()) {
+            throw new IllegalArgumentException("카테고리를 하나 이상 선택하거나 전체 랜덤이어야 합니다.");
+        }
+        if (questionCount != null && questionCount <= 0) {
+            throw new IllegalArgumentException("질문 수는 1 이상이어야 합니다: " + questionCount);
+        }
+        if (difficulty != null) {
+            DomainGuard.requireInRange(difficulty, 1, 3, "difficulty");
+        }
+        this.questionCount = questionCount;
+        this.difficulty = difficulty;
+        this.status = SessionStatus.IN_PROGRESS;
+        this.startedAt = DomainGuard.requireNotNull(startedAt, "startedAt");
+    }
+
+    /**
+     * 세션을 시작한다(설정 검증 포함). 전체 랜덤이 아니면 카테고리를 하나 이상 선택해야 하고,
+     * 난이도는 지정 시 1~3, 질문 수는 지정 시 1 이상이어야 한다. 시작 상태는 진행 중이다.
+     */
+    public static InterviewSession start(User user, Set<Long> categoryIds, boolean randomAll,
+                                         Integer questionCount, Integer difficulty,
+                                         LocalDateTime startedAt) {
+        return new InterviewSession(user, categoryIds, randomAll, questionCount, difficulty, startedAt);
+    }
 
     // --- 도메인 행위: 상태 전이 규칙은 세션이 소유한다 (domain-design.md §3, AP-1/AP-2 방지) ---
 

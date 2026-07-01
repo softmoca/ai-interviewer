@@ -1,10 +1,14 @@
 package com.aiinterviewer.domain.session;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import com.aiinterviewer.domain.user.PasswordEncryptor;
+import com.aiinterviewer.domain.user.User;
 import java.time.LocalDateTime;
+import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,7 +22,24 @@ import org.junit.jupiter.api.Test;
  */
 class InterviewSessionTest {
 
+    private static final LocalDateTime STARTED_AT = LocalDateTime.of(2026, 7, 1, 10, 0);
     private static final LocalDateTime ENDED_AT = LocalDateTime.of(2026, 7, 1, 10, 30);
+
+    private static final PasswordEncryptor FAKE_ENCRYPTOR = new PasswordEncryptor() {
+        @Override
+        public String encrypt(String rawPassword) {
+            return "enc:" + rawPassword;
+        }
+
+        @Override
+        public boolean matches(String rawPassword, String encryptedPassword) {
+            return encryptedPassword.equals("enc:" + rawPassword);
+        }
+    };
+
+    private static User host() {
+        return User.register("host@test.com", "password1", "host", FAKE_ENCRYPTOR);
+    }
 
     @Test
     @DisplayName("새 세션은 진행 중 상태다")
@@ -62,6 +83,52 @@ class InterviewSessionTest {
                 softly.assertThat(session.getEndedAt()).isEqualTo(ENDED_AT);
                 softly.assertThat(session.isInProgress()).isFalse();
             });
+        }
+    }
+
+    @Nested
+    @DisplayName("start: 세션 시작 설정 검증")
+    class Start {
+
+        @Test
+        @DisplayName("유효한 설정으로 진행 중 세션을 시작한다")
+        void startsSession() {
+            InterviewSession session =
+                    InterviewSession.start(host(), Set.of(1L, 2L), false, 5, 2, STARTED_AT);
+
+            assertSoftly(softly -> {
+                softly.assertThat(session.isInProgress()).isTrue();
+                softly.assertThat(session.getCategoryIds()).containsExactlyInAnyOrder(1L, 2L);
+                softly.assertThat(session.isRandomAll()).isFalse();
+                softly.assertThat(session.getQuestionCount()).isEqualTo(5);
+                softly.assertThat(session.getDifficulty()).isEqualTo(2);
+                softly.assertThat(session.getStartedAt()).isEqualTo(STARTED_AT);
+            });
+        }
+
+        @Test
+        @DisplayName("전체 랜덤이면 카테고리 없이도 시작할 수 있다")
+        void randomAllAllowsNoCategory() {
+            assertThatCode(() -> InterviewSession.start(host(), Set.of(), true, null, null, STARTED_AT))
+                    .doesNotThrowAnyException();
+        }
+
+        @Test
+        @DisplayName("전체 랜덤이 아닌데 카테고리가 없으면 거부한다")
+        void rejectsNoCategoryWhenNotRandom() {
+            assertThatThrownBy(() -> InterviewSession.start(host(), Set.of(), false, null, null, STARTED_AT))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @Test
+        @DisplayName("난이도(1~3)·질문 수(≥1)·사용자 필수를 위반하면 거부한다")
+        void rejectsInvalidSettings() {
+            assertThatThrownBy(() -> InterviewSession.start(host(), Set.of(1L), false, null, 4, STARTED_AT))
+                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> InterviewSession.start(host(), Set.of(1L), false, 0, null, STARTED_AT))
+                    .isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> InterviewSession.start(null, Set.of(1L), false, null, null, STARTED_AT))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
