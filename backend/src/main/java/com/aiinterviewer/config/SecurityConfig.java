@@ -1,33 +1,55 @@
 package com.aiinterviewer.config;
 
+import com.aiinterviewer.adapter.security.JwtAuthenticationFilter;
+import com.aiinterviewer.application.auth.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
- * 보안 설정 뼈대 (M2에서 JWT 인증으로 확장 예정 — docs/아키텍처.md, 결정사항 D9).
+ * 보안 설정(결정사항 D21). JWT 기반 무상태(STATELESS) 인증.
  *
- * <p>현재는 뼈대 단계라 전 경로를 열어두고 H2 콘솔 접근만 허용한다.
- * 실제 인증/인가 규칙은 인증 기능 구현 시 채운다.
+ * <ul>
+ *   <li>공개: 인증 API(/api/auth/**), 헬스체크(/api/health), H2 콘솔(dev)</li>
+ *   <li>그 외: 인증 필요 → {@link JwtAuthenticationFilter}가 세운 인증이 없으면 401</li>
+ * </ul>
  */
 @Configuration
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   JwtAuthenticationFilter jwtAuthenticationFilter)
+            throws Exception {
         http
-                // 개발 편의: H2 콘솔 사용을 위해 CSRF/프레임 옵션 완화 (운영 전환 시 재검토)
-                .csrf(csrf -> csrf.ignoringRequestMatchers(
-                        AntPathRequestMatcher.antMatcher("/h2-console/**")))
+                // 무상태 토큰 인증이라 CSRF 불필요(세션 미사용). H2 콘솔 프레임 허용.
+                .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // TODO(M2): 인증 필요한 경로/공개 경로를 구분한다.
-                        .anyRequest().permitAll());
+                        // 공개: 가입/로그인/헬스체크. /api/auth/me 등 그 외는 인증 필요.
+                        .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/health").permitAll()
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
+                        .anyRequest().authenticated())
+                .exceptionHandling(handling -> handling
+                        .authenticationEntryPoint((request, response, ex) ->
+                                response.sendError(HttpStatus.UNAUTHORIZED.value(), "인증이 필요합니다.")))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    /** 인증 필터를 토큰 포트로 구성한다(구현 교체 시 이 배선만 영향). */
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(TokenProvider tokenProvider) {
+        return new JwtAuthenticationFilter(tokenProvider);
     }
 
     @Bean
