@@ -99,7 +99,7 @@ npm run dev      # http://localhost:5173
 
 로드맵은 [기획서](./docs/기획서.md)를 참고하세요.
 
-- [x] 기획·설계 문서화 + 질문 데이터 수집 (운영체제)
+- [x] 기획·설계 문서화 + 질문 데이터 수집 (A안 9개 카테고리, 193문항)
 - [x] 백엔드 인증 (Spring Security + JWT)
 - [x] 세션 API + seed 제너릭 적재
 - [x] LLM 꼬리질문 (Gemini)
