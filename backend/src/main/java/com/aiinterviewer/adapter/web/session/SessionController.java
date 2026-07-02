@@ -4,9 +4,11 @@ import com.aiinterviewer.application.session.AnswerResult;
 import com.aiinterviewer.application.session.SessionDetailResult;
 import com.aiinterviewer.application.session.SessionService;
 import com.aiinterviewer.application.session.SessionStatusResult;
+import com.aiinterviewer.application.session.SessionSummaryResult;
 import com.aiinterviewer.application.session.StartSessionCommand;
 import com.aiinterviewer.application.session.StartSessionResult;
 import jakarta.validation.Valid;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * <ul>
  *   <li>POST /api/sessions — 세션 시작 + 첫 질문 서빙</li>
+ *   <li>GET  /api/sessions — 내 면접 기록 목록(최근 순)</li>
  *   <li>POST /api/sessions/{id}/answers — 답변 기록</li>
  *   <li>POST /api/sessions/{id}/complete — 세션 종료</li>
  *   <li>GET  /api/sessions/{id} — 세션 상세(대화 이력)</li>
@@ -45,6 +48,11 @@ public class SessionController {
         StartSessionCommand command = new StartSessionCommand(request.categorySlugs(),
                 request.randomAll(), request.questionCount(), request.difficulty());
         return sessionService.startSession(userId, command);
+    }
+
+    @GetMapping
+    public List<SessionSummaryResult> list(@AuthenticationPrincipal Long userId) {
+        return sessionService.listMySessions(userId);
     }
 
     @PostMapping("/{sessionId}/answers")

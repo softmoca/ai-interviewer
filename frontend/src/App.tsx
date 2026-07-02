@@ -4,6 +4,7 @@ import { EvaluationReportPage } from './pages/EvaluationReportPage';
 import { HomePage } from './pages/HomePage';
 import { InterviewPage } from './pages/InterviewPage';
 import { LoginPage } from './pages/LoginPage';
+import { SessionListPage } from './pages/SessionListPage';
 import { SessionSetupPage } from './pages/SessionSetupPage';
 import { SignupPage } from './pages/SignupPage';
 
@@ -17,6 +18,14 @@ export function App() {
         element={
           <ProtectedRoute>
             <HomePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/sessions"
+        element={
+          <ProtectedRoute>
+            <SessionListPage />
           </ProtectedRoute>
         }
       />

@@ -106,6 +106,15 @@ public class SessionService {
         return new SessionStatusResult(session.getId(), session.getStatus(), session.getEndedAt());
     }
 
+    /** 사용자의 면접 기록 목록(최근 순). */
+    @Transactional(readOnly = true)
+    public List<SessionSummaryResult> listMySessions(Long userId) {
+        return sessionRepository.findByUserIdOrderByStartedAtDesc(userId).stream()
+                .map(s -> new SessionSummaryResult(s.getId(), s.getStatus(), s.getStartedAt(),
+                        s.getEndedAt()))
+                .toList();
+    }
+
     /** 세션 상세(설정·상태 + 대화 이력)를 조회한다(소유자만). */
     @Transactional(readOnly = true)
     public SessionDetailResult getSession(Long userId, Long sessionId) {
