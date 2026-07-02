@@ -88,6 +88,6 @@ cd backend && ./gradlew test
 - [x] 백엔드 인증 (Spring Security + JWT)
 - [x] 세션 API + seed 제너릭 적재
 - [x] LLM 꼬리질문 (Gemini)
-- [ ] 세션 평가 리포트
+- [x] 세션 평가 리포트 (개념별 5점 + 모범답안 + 총평) → **텍스트 면접 1회 완주**
 - [ ] 프론트엔드 연결 (MVP)
 - [ ] 음성 입력, 카테고리 확장, 소셜 로그인

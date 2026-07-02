@@ -77,6 +77,7 @@
 | 규칙 | 소유자 | 비고 |
 |------|--------|------|
 | 세션 상태 전이(진행→완료/중단) | `InterviewSession.complete()/abandon()` | 진행중일 때만 전이 허용(불변식). |
+| 평가 가능 여부(완료 세션만) | `InterviewSession.isCompleted()` | 미완료 세션 평가 거부(D28). |
 | 세션 종료 시각 기록 | `InterviewSession` (전이 메서드 내부) | 서비스가 직접 `setEndedAt` 금지. |
 | 평가 점수 5점 범위(1~5) | `Evaluation` 생성 시점 검증 | 범위 밖이면 생성 거부(D10, AP-6/AP-9 방지). |
 | 카테고리 생성(필수값) | `Category.of()` | seed 로더가 생성 경로(D24). |
@@ -85,7 +86,7 @@
 | 세션 시작 설정(카테고리/난이도/질문 수) | `InterviewSession.start()` | 전체 랜덤 아니면 카테고리 필수, 난이도 1~3(구현됨). |
 | 문답 role/followUp 일관성 | `QaLog.opening()/userAnswer()/followUp()` | 오프닝=면접관+질문, 답변=사용자, 꼬리질문=면접관+질문없음+followUp. |
 | 꼬리질문 생성/프롬프트 조립 | 애플리케이션 `FollowUpPromptFactory`+`LlmClient` | 도메인 밖. 도메인은 검증된 결과만 받음(D26). |
-| 세션 소유권(인가) | 애플리케이션 `SessionService` | id 비교는 앱에서(도메인 §1.3, AP-7 회피). |
+| 세션 소유권(인가) | 애플리케이션 `SessionAccessGuard`(세션/평가 공용) | id 비교는 앱에서(도메인 §1.3, AP-7 회피). |
 | 사용자 가입(필수값·비밀번호 암호화) | `User.register()` | 원문 비밀번호는 도메인에 남기지 않음. 암호화는 `PasswordEncryptor` 포트 위임(D22). |
 | 비밀번호 대조 인증 | `User.authenticate()` | 해시를 밖으로 노출하지 않고 사용자 객체가 판단(Tell, Don't Ask). |
 | 이메일 중복 여부 | 애플리케이션 `AuthService` | 저장소 조회 필요 → 애플리케이션 관심사. |
@@ -114,9 +115,10 @@ com.aiinterviewer
 │   └── evaluation/             # Evaluation
 ├── application/                # 유스케이스/오케스트레이션 (스프링 허용, 도메인 규칙은 위임)
 │   ├── auth/                   # AuthService, TokenProvider(포트), LoginResult/MeResult, 예외
-│   └── session/                # SessionService, StartSessionCommand, *Result, 세션 예외
+│   ├── session/                # SessionService, SessionAccessGuard(공용 인가), *Result, 세션 예외
+│   └── evaluation/             # EvaluationService, EvaluationPromptFactory, EvaluationReportResult, 예외
 ├── adapter/                    # 바깥 세계 어댑터
-│   ├── web/                    # GlobalExceptionHandler + auth/·session/ (컨트롤러·요청 DTO)
+│   ├── web/                    # GlobalExceptionHandler + auth/·session/·evaluation/ (컨트롤러·DTO)
 │   ├── security/               # JwtTokenProvider, BCryptPasswordEncryptor, JwtAuthenticationFilter, JwtProperties
 │   └── seed/                   # SeedDataLoader, SeedQuestion (제너릭 seed 적재)
 ├── llm/                        # 외부 지능 추상화 (도메인이 의존하지 않음)
