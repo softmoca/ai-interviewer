@@ -1,0 +1,142 @@
+[
+  {
+    "category": "컴퓨터구조",
+    "topic": "컴퓨터의 구성",
+    "content": "컴퓨터의 기본 구성 요소를 설명해주세요.",
+    "difficulty": 1,
+    "keywords": ["CPU(중앙처리장치)", "주기억장치(RAM)", "보조기억장치", "입출력장치", "버스"],
+    "model_answer": "컴퓨터는 크게 연산·제어를 담당하는 CPU, 실행 중인 프로그램·데이터를 담는 주기억장치(RAM), 데이터를 영구 저장하는 보조기억장치(디스크), 데이터를 주고받는 입출력장치로 구성된다. 이들은 데이터·주소·제어 신호가 오가는 버스(bus)로 연결되어 협력한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%EC%BB%B4%ED%93%A8%ED%84%B0%EC%9D%98%20%EA%B5%AC%EC%84%B1.md",
+    "is_opening": true
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "CPU 작동 원리",
+    "content": "CPU는 어떤 요소들로 구성되나요?",
+    "difficulty": 2,
+    "keywords": ["연산장치(ALU)", "제어장치", "레지스터", "고속 임시 저장"],
+    "model_answer": "CPU는 크게 세 부분으로 구성된다. 연산장치(ALU)는 산술·논리 연산을 수행하고, 제어장치는 명령어를 해독해 각 장치에 제어 신호를 보내 실행 순서를 통제한다. 레지스터는 CPU 내부의 고속 기억장치로 명령어·주소·연산 데이터·결과를 임시 저장한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%EC%A4%91%EC%95%99%EC%B2%98%EB%A6%AC%EC%9E%A5%EC%B9%98(CPU)%20%EC%9E%91%EB%8F%99%20%EC%9B%90%EB%A6%AC.md",
+    "is_opening": true
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "CPU 작동 원리",
+    "content": "명령어 사이클(instruction cycle)이 어떻게 진행되는지 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["인출(fetch)-해독(decode)-실행(execute)", "PC로 다음 명령어 주소", "IR에 현재 명령어", "인출 시 PC 증가"],
+    "model_answer": "CPU는 주기억장치에서 명령어를 하나씩 가져와 실행하는 과정을 반복한다. 인출(fetch) 단계에서 PC(프로그램 카운터)가 가리키는 주소의 명령어를 MAR→MBR을 거쳐 IR(명령어 레지스터)에 가져오고 PC를 다음 주소로 증가시킨다. 이후 해독해 실행(execute) 단계에서 연산을 수행한다. 이 인출-해독-실행이 하나의 명령어 사이클이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%EC%A4%91%EC%95%99%EC%B2%98%EB%A6%AC%EC%9E%A5%EC%B9%98(CPU)%20%EC%9E%91%EB%8F%99%20%EC%9B%90%EB%A6%AC.md",
+    "is_opening": true
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "CPU 작동 원리",
+    "content": "주요 특수 목적 레지스터(PC, IR, MAR, MBR, AC)의 역할을 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["PC(다음 명령어 주소)", "IR(현재 실행 명령어)", "MAR(접근할 메모리 주소)", "MBR(읽고 쓸 데이터)", "AC(연산 결과 누산기)"],
+    "model_answer": "PC는 다음에 실행할 명령어의 주소를 담고, IR은 현재 실행 중인 명령어를 담는다. MAR은 읽거나 쓸 주기억장치의 주소를, MBR은 그 주소에서 읽어오거나 저장할 데이터를 임시로 담는다. AC(누산기)는 연산의 중간·최종 결과를 임시 저장한다. 이 레지스터들이 협력해 명령어 사이클이 돌아간다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%EC%A4%91%EC%95%99%EC%B2%98%EB%A6%AC%EC%9E%A5%EC%B9%98(CPU)%20%EC%9E%91%EB%8F%99%20%EC%9B%90%EB%A6%AC.md",
+    "is_opening": false
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "캐시 메모리",
+    "content": "캐시 메모리(Cache Memory)란 무엇이고 왜 사용하나요?",
+    "difficulty": 2,
+    "keywords": ["속도 차이 병목 완화", "CPU와 주기억장치 사이", "자주 쓰는 데이터 저장", "지역성 활용"],
+    "model_answer": "캐시 메모리는 속도가 빠른 CPU와 상대적으로 느린 주기억장치(RAM) 사이의 속도 차이로 생기는 병목을 줄이기 위한 고속 메모리다. CPU가 자주 쓰는 데이터를 캐시에 저장해두고, 다음에 필요할 때 느린 RAM 대신 캐시에서 먼저 가져와 속도를 높인다. 빠르지만 SRAM이라 비싸고 용량이 작다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%EC%BA%90%EC%8B%9C%20%EB%A9%94%EB%AA%A8%EB%A6%AC(Cache%20Memory).md",
+    "is_opening": true
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "캐시 메모리",
+    "content": "L1, L2, L3 캐시의 계층 구조를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["속도·크기 계층", "L1 가장 빠름/작음", "L1→L2→L3 순 탐색", "코어별/공유"],
+    "model_answer": "캐시는 속도와 크기에 따라 계층을 이룬다. L1은 CPU 코어에 가장 가까워 가장 빠르지만 작고 보통 코어마다 독립적이다. L1에서 못 찾으면 L2, 그다음 L3로 내려가는데, 뒤로 갈수록 느리지만 크고 여러 코어가 공유한다. CPU는 L1부터 순서대로 탐색해 데이터를 찾는다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%EC%BA%90%EC%8B%9C%20%EB%A9%94%EB%AA%A8%EB%A6%AC(Cache%20Memory).md",
+    "is_opening": true
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "캐시 메모리",
+    "content": "캐시 히트/미스와 참조 지역성(locality)의 관계를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["캐시 히트/미스", "시간 지역성(최근 참조 재참조)", "공간 지역성(인접 데이터)", "인접 데이터 함께 로드"],
+    "model_answer": "CPU가 요청한 데이터가 캐시에 있으면 캐시 히트, 없어서 RAM에서 가져오면 캐시 미스다. 캐시는 참조 지역성을 활용하는데, 시간 지역성(최근 쓴 데이터를 곧 다시 씀)과 공간 지역성(참조한 곳 근처를 씀)이 있다. 그래서 데이터를 가져올 때 인접한 데이터까지 블록 단위로 함께 캐시에 올려 미래의 히트율을 높인다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%EC%BA%90%EC%8B%9C%20%EB%A9%94%EB%AA%A8%EB%A6%AC(Cache%20Memory).md",
+    "is_opening": true
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "캐시 메모리",
+    "content": "캐시 미스의 세 가지 종류(Cold/Conflict/Capacity miss)를 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["Cold miss(최초 접근)", "Conflict miss(같은 캐시 주소 충돌)", "Capacity miss(공간 부족)"],
+    "model_answer": "Cold miss는 해당 데이터를 처음 접근해서 캐시에 없을 때 나는 필수적 미스다. Conflict miss는 여러 메모리 주소가 같은 캐시 위치에 매핑되어 서로 밀어내면서 나는 미스로 direct mapped 방식에서 잦다. Capacity miss는 캐시 공간 자체가 부족해서 밀려난 데이터를 다시 찾을 때 나는 미스다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%EC%BA%90%EC%8B%9C%20%EB%A9%94%EB%AA%A8%EB%A6%AC(Cache%20Memory).md",
+    "is_opening": false
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "캐시 메모리",
+    "content": "캐시 매핑 방식(Direct Mapped / Fully Associative / Set Associative)을 비교해주세요.",
+    "difficulty": 3,
+    "keywords": ["Direct(다대일, 단순·빠름, conflict miss)", "Fully Associative(아무데나, 검색 비쌈)", "Set Associative(절충형)"],
+    "model_answer": "Direct Mapped는 메모리 주소가 정해진 하나의 캐시 위치에만 매핑되어 단순하고 빠르지만 Conflict miss가 잦다. Fully Associative는 빈 곳 아무데나 저장할 수 있어 충돌은 없지만, 찾을 때 모든 블록을 검색해야 해 비용이 크다. Set Associative는 둘의 절충으로, 특정 집합(set) 안에서는 자유롭게 저장해 충돌을 줄이면서 검색 비용도 적당한 실제로 널리 쓰이는 방식이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%EC%BA%90%EC%8B%9C%20%EB%A9%94%EB%AA%A8%EB%A6%AC(Cache%20Memory).md",
+    "is_opening": false
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "고정 소수점과 부동 소수점",
+    "content": "고정 소수점과 부동 소수점 표현 방식의 차이를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["고정 소수점(정수부/소수부 고정, 범위 좁음, 정확)", "부동 소수점(부호+지수+가수, 넓은 범위, 오차)"],
+    "model_answer": "고정 소수점은 소수점 위치를 고정해 정수부와 소수부에 정해진 비트를 할당하는 방식으로, 구현이 단순하고 정확하지만 표현 범위가 좁다. 부동 소수점은 부호·지수·가수로 나눠 소수점을 유동적으로 표현(IEEE 754)해 매우 넓은 범위의 수를 다룰 수 있지만, 근사 표현이라 오차가 생길 수 있다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%EA%B3%A0%EC%A0%95%20%EC%86%8C%EC%88%98%EC%A0%90%20%26%20%EB%B6%80%EB%8F%99%20%EC%86%8C%EC%88%98%EC%A0%90.md",
+    "is_opening": true
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "고정 소수점과 부동 소수점",
+    "content": "부동 소수점 연산에서 오차가 발생하는 이유는 무엇인가요?",
+    "difficulty": 3,
+    "keywords": ["2진수로 소수 정확 표현 불가", "0.1 같은 값 무한 반복", "가수 비트 한계", "근사값 저장"],
+    "model_answer": "컴퓨터는 수를 2진수로 저장하는데, 0.1이나 0.2처럼 10진 소수 중 상당수는 2진수로 유한하게 표현되지 않고 무한 반복된다. 부동 소수점은 가수 비트가 유한하므로 이를 잘라 근사값으로 저장하고, 그래서 0.1 + 0.2가 정확히 0.3이 되지 않는 오차가 생긴다. 정확한 계산이 필요하면 정수 단위나 십진 타입(BigDecimal 등)을 쓴다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%EA%B3%A0%EC%A0%95%20%EC%86%8C%EC%88%98%EC%A0%90%20%26%20%EB%B6%80%EB%8F%99%20%EC%86%8C%EC%88%98%EC%A0%90.md",
+    "is_opening": false
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "패리티 비트와 해밍 코드",
+    "content": "패리티 비트(Parity Bit)가 무엇이고 어떤 한계가 있나요?",
+    "difficulty": 2,
+    "keywords": ["오류 검출용 1비트", "짝수/홀수 패리티", "1비트 오류만 검출", "정정 불가·짝수 개 오류 감지 못함"],
+    "model_answer": "패리티 비트는 데이터에 1비트를 추가해 1의 개수를 짝수(짝수 패리티) 또는 홀수(홀수 패리티)로 맞춰 오류를 검출하는 방법이다. 전송 후 1의 개수가 규칙과 다르면 오류가 있음을 안다. 하지만 오류가 있다는 것만 알 뿐 어디인지 몰라 정정은 못 하고, 2개(짝수 개) 비트가 동시에 바뀌면 검출하지 못하는 한계가 있다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%ED%8C%A8%EB%A6%AC%ED%8B%B0%20%EB%B9%84%ED%8A%B8%20%26%20%ED%95%B4%EB%B0%8D%20%EC%BD%94%EB%93%9C.md",
+    "is_opening": true
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "패리티 비트와 해밍 코드",
+    "content": "해밍 코드(Hamming Code)란 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["오류 검출 + 정정", "여러 개의 패리티 비트", "1비트 오류 위치 파악·정정"],
+    "model_answer": "해밍 코드는 여러 개의 패리티 비트를 특정 위치에 배치해, 오류를 검출할 뿐 아니라 어느 비트에서 오류가 났는지 위치까지 찾아 정정할 수 있는 오류 정정 코드다. 패리티 비트가 검출만 가능한 것과 달리, 해밍 코드는 1비트 오류를 스스로 바로잡을 수 있어 메모리·통신의 신뢰성을 높인다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/%ED%8C%A8%EB%A6%AC%ED%8B%B0%20%EB%B9%84%ED%8A%B8%20%26%20%ED%95%B4%EB%B0%8D%20%EC%BD%94%EB%93%9C.md",
+    "is_opening": true
+  },
+  {
+    "category": "컴퓨터구조",
+    "topic": "RISC와 CISC (ARM)",
+    "content": "RISC와 CISC의 차이는 무엇이고 ARM 프로세서는 어디에 속하나요?",
+    "difficulty": 2,
+    "keywords": ["RISC(단순·고정 길이 명령, 저전력)", "CISC(복잡·가변 길이 명령)", "ARM=RISC 기반", "모바일 저전력"],
+    "model_answer": "CISC는 복잡하고 다양한 명령어를 하드웨어로 지원해 명령어 하나가 많은 일을 하지만 회로가 복잡하고 전력 소모가 크다(x86 계열). RISC는 단순하고 고정 길이인 소수의 명령어만 두어 파이프라이닝과 저전력에 유리하다. ARM은 RISC 기반 프로세서로, 전력 효율이 좋아 스마트폰 등 모바일 기기에 널리 쓰인다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Computer%20Architecture/ARM%20%ED%94%84%EB%A1%9C%EC%84%B8%EC%84%9C.md",
+    "is_opening": true
+  }
+]
