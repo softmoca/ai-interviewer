@@ -5,6 +5,7 @@ import com.aiinterviewer.application.auth.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -29,6 +30,8 @@ public class SecurityConfig {
                                                    JwtAuthenticationFilter jwtAuthenticationFilter)
             throws Exception {
         http
+                // CORS 활성화(CorsConfigurationSource 빈 사용 — 프론트 직접 호출/배포 대비, D29)
+                .cors(Customizer.withDefaults())
                 // 무상태 토큰 인증이라 CSRF 불필요(세션 미사용). H2 콘솔 프레임 허용.
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
