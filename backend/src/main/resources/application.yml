@@ -25,6 +25,11 @@ spring:
       enabled: true
       path: /h2-console
 
+# CORS 허용 오리진 (결정사항 D29) — 프론트가 백엔드를 직접 호출할 때. 쉼표로 여러 개 지정.
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+
 # 인증(JWT) 설정 (결정사항 D21)
 # - secret: HS256 서명 키(최소 32바이트). 운영에서는 반드시 환경변수(JWT_SECRET)로 주입.
 #   아래 기본값은 '개발 로컬 전용'이며 실제 비밀이 아니다(운영 커밋 금지 원칙 유지).

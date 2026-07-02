@@ -72,6 +72,21 @@ cd backend && ./gradlew test
   GEMINI_API_KEY=... ./gradlew test --tests '*GeminiLlmClientLiveTest'
   ```
 
+## 🖥 실행 (프론트엔드)
+
+사전 요구: **Node 18+**. 백엔드(8080)를 함께 띄워야 API가 동작합니다.
+
+```bash
+cd frontend
+npm install
+npm run dev      # http://localhost:5173
+```
+
+- 개발 시 `/api` 요청은 **Vite 프록시**가 백엔드(8080)로 전달합니다(CORS 불필요).
+- 백엔드를 직접 호출하려면 `frontend/.env`에 `VITE_API_BASE_URL=http://localhost:8080/api`
+  (백엔드 CORS가 `localhost:5173` 허용). 예시는 [`frontend/.env.example`](./frontend/.env.example).
+- 빌드/테스트: `npm run build`(타입체크+번들), `npm run test`(vitest 스모크).
+
 ## 📖 문서
 
 설계와 의사결정은 [`docs/`](./docs) 에 정리되어 있습니다.
@@ -89,5 +104,5 @@ cd backend && ./gradlew test
 - [x] 세션 API + seed 제너릭 적재
 - [x] LLM 꼬리질문 (Gemini)
 - [x] 세션 평가 리포트 (개념별 5점 + 모범답안 + 총평) → **텍스트 면접 1회 완주**
-- [ ] 프론트엔드 연결 (MVP)
+- [~] 프론트엔드 연결 (MVP): 세팅 + 인증(로그인/회원가입/보호 라우트) 완료, 면접 UI 진행 예정
 - [ ] 음성 입력, 카테고리 확장, 소셜 로그인
