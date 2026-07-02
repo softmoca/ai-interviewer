@@ -40,10 +40,16 @@ public class EvaluationService {
         this.promptFactory = promptFactory;
     }
 
-    /** 완료된 세션을 평가한다. 이미 평가되어 있으면 기존 리포트를 그대로 반환한다(멱등). */
+    /**
+     * 완료된 세션을 평가한다. 이미 평가되어 있으면 기존 리포트를 그대로 반환한다(멱등).
+     *
+     * <p>세션 행에 쓰기 잠금을 걸어 <b>동시에 들어온 두 요청</b>이 각각 LLM을 호출해 평가를
+     * 중복 생성하는 것을 막는다(결정사항 D35). 뒤늦은 요청은 앞 요청이 커밋될 때까지 대기했다가
+     * 이미 존재하는 리포트를 반환한다. 잠금은 이 트랜잭션이 끝날 때까지 유지된다.
+     */
     @Transactional
     public EvaluationReportResult evaluate(Long userId, Long sessionId) {
-        InterviewSession session = sessionAccessGuard.getOwned(userId, sessionId);
+        InterviewSession session = sessionAccessGuard.getOwnedForUpdate(userId, sessionId);
         if (!session.isCompleted()) {
             throw new SessionNotCompletedException(sessionId);
         }
