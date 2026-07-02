@@ -56,9 +56,11 @@ seed/       # 카테고리별 질문 데이터 (os.json ...)
 ## 질문 데이터 (seed)
 - `seed/*.json` 형식: category / topic / content / difficulty(1~3) / keywords /
   model_answer / source_url / is_opening
-- 현재 `seed/os.json`(운영체제) 완료. 남은 A안 카테고리: 자료구조, 알고리즘, 네트워크,
-  데이터베이스, 디자인패턴, 컴퓨터구조, 소프트웨어공학, 개발상식.
-- 질문 추출 기준은 `docs/결정사항.md` D17 참고.
+- **A안 9개 카테고리 seed 수집 완료**(총 193문항): 운영체제(os) · 자료구조(data-structure) ·
+  데이터베이스(database) · 네트워크(network) · 알고리즘(algorithm) · 소프트웨어공학
+  (software-engineering) · 컴퓨터구조(computer-architecture) · 디자인패턴(design-pattern) ·
+  개발상식(common-sense). 제너릭 로더가 기동 시 전부 적재(통합 테스트로 검증).
+- 질문 추출 기준은 `docs/결정사항.md` D17, 적재 규칙은 D24 참고.
 
 ## 개발 로드맵 (요약)
 - M1: 스키마 확정 + 질문 seed 수집
