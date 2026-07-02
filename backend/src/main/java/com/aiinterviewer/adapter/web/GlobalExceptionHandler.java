@@ -7,6 +7,8 @@ import com.aiinterviewer.application.session.NoAvailableQuestionException;
 import com.aiinterviewer.application.session.SessionAccessDeniedException;
 import com.aiinterviewer.application.session.SessionNotFoundException;
 import com.aiinterviewer.application.session.SessionNotInProgressException;
+import com.aiinterviewer.llm.LlmCallException;
+import com.aiinterviewer.llm.LlmNotConfiguredException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -54,6 +56,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleConflict(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse("CONFLICT", e.getMessage()));
+    }
+
+    /** LLM 미설정(키 없음) → 503. 앱은 살아있고 LLM 기능만 비활성임을 알린다(D26). */
+    @ExceptionHandler(LlmNotConfiguredException.class)
+    public ResponseEntity<ErrorResponse> handleLlmNotConfigured(LlmNotConfiguredException e) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(new ErrorResponse("LLM_NOT_CONFIGURED", e.getMessage()));
+    }
+
+    /** LLM 호출/파싱 실패 → 502. */
+    @ExceptionHandler(LlmCallException.class)
+    public ResponseEntity<ErrorResponse> handleLlmCall(LlmCallException e) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(new ErrorResponse("LLM_CALL_FAILED", e.getMessage()));
     }
 
     /** 요청 바디 검증 실패(@Valid). 첫 위반 메시지를 대표로 담는다. */

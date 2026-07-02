@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.aiinterviewer.support.TestLlmConfig;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -20,9 +22,11 @@ import org.springframework.test.web.servlet.MvcResult;
 /**
  * 세션 API 통합 테스트 — 실 컨텍스트(보안 + JWT + seed 적재된 H2)로 전 흐름과 오류 케이스 검증.
  * seed 로더가 기동 시 "os" 카테고리를 적재하므로 첫 질문 서빙이 실제로 동작한다.
+ * LLM은 {@link TestLlmConfig}의 Fake로 대체해 키 없이 꼬리질문 생성까지 검증한다.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(TestLlmConfig.class)
 class SessionIntegrationTest {
 
     @Autowired
@@ -53,7 +57,7 @@ class SessionIntegrationTest {
         long sessionId = objectMapper.readTree(started.getResponse().getContentAsString())
                 .get("sessionId").asLong();
 
-        // 답변 기록 (seq 2)
+        // 답변 기록(seq 2) + 꼬리질문 생성(Fake LLM → 1개, seq 3)
         mockMvc.perform(post("/api/sessions/" + sessionId + "/answers")
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -61,16 +65,20 @@ class SessionIntegrationTest {
                                 {"content":"운영체제는 자원 관리자입니다."}
                                 """))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.seq").value(2));
+                .andExpect(jsonPath("$.answerSeq").value(2))
+                .andExpect(jsonPath("$.followUps.length()").value(1))
+                .andExpect(jsonPath("$.followUps[0].seq").value(3));
 
-        // 조회 — 대화 이력 2건(오프닝 + 답변)
+        // 조회 — 대화 이력 3건(오프닝 + 답변 + 꼬리질문)
         mockMvc.perform(get("/api/sessions/" + sessionId)
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("IN_PROGRESS"))
-                .andExpect(jsonPath("$.transcript.length()").value(2))
+                .andExpect(jsonPath("$.transcript.length()").value(3))
                 .andExpect(jsonPath("$.transcript[0].role").value("INTERVIEWER"))
-                .andExpect(jsonPath("$.transcript[1].role").value("USER"));
+                .andExpect(jsonPath("$.transcript[1].role").value("USER"))
+                .andExpect(jsonPath("$.transcript[2].role").value("INTERVIEWER"))
+                .andExpect(jsonPath("$.transcript[2].followUp").value(true));
 
         // 종료
         mockMvc.perform(post("/api/sessions/" + sessionId + "/complete")

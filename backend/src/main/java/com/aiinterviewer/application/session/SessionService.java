@@ -9,7 +9,10 @@ import com.aiinterviewer.domain.session.QaLog;
 import com.aiinterviewer.domain.session.QaLogRepository;
 import com.aiinterviewer.domain.user.User;
 import com.aiinterviewer.domain.user.UserRepository;
+import com.aiinterviewer.llm.LlmClient;
+import com.aiinterviewer.llm.dto.FollowUpResult;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,26 +25,34 @@ import org.springframework.transaction.annotation.Transactional;
  * 면접 세션 유스케이스(애플리케이션 계층). 판단(설정 검증·상태 전이·문답 일관성)은 도메인이
  * 소유하고, 여기서는 조회·트랜잭션·흐름 조립만 담당한다(SRP, 도메인 우선).
  *
- * <p>이번 슬라이스는 LLM 꼬리질문 없이 세션 골격만 다룬다(첫 질문 서빙 → 답변 기록 → 종료/조회).
- * 소유권 검증(요청자=세션 주인)은 인가 관심사라 애플리케이션에서 처리한다(도메인 §1.3, id 회피).
+ * <p>답변 제출 시 답변을 기록하고 {@link LlmClient}로 꼬리질문 1~2개를 생성해 저장한다(패턴 B).
+ * LLM 호출과 저장은 한 트랜잭션이므로, LLM 미설정/실패 시 답변 기록도 함께 롤백되고 명확한
+ * 오류가 반환된다(결정사항 D26). 소유권 검증은 인가 관심사라 애플리케이션에서 처리한다(§1.3).
  */
 @Service
 public class SessionService {
+
+    private static final int QUESTION_POOL_SIZE = 8;
 
     private final InterviewSessionRepository sessionRepository;
     private final QaLogRepository qaLogRepository;
     private final QuestionRepository questionRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final LlmClient llmClient;
+    private final FollowUpPromptFactory promptFactory;
 
     public SessionService(InterviewSessionRepository sessionRepository, QaLogRepository qaLogRepository,
                           QuestionRepository questionRepository, CategoryRepository categoryRepository,
-                          UserRepository userRepository) {
+                          UserRepository userRepository, LlmClient llmClient,
+                          FollowUpPromptFactory promptFactory) {
         this.sessionRepository = sessionRepository;
         this.qaLogRepository = qaLogRepository;
         this.questionRepository = questionRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
+        this.llmClient = llmClient;
+        this.promptFactory = promptFactory;
     }
 
     /** 세션을 시작하고 첫 질문(오프닝)을 서빙한다. */
@@ -62,16 +73,27 @@ public class SessionService {
                         first.getDifficulty(), opening.getSeq()));
     }
 
-    /** 사용자 답변을 세션에 기록한다(진행 중 세션만, 소유자만). */
+    /** 사용자 답변을 기록하고 꼬리질문 1~2개를 생성해 저장한다(진행 중 세션만, 소유자만). */
     @Transactional
     public AnswerResult submitAnswer(Long userId, Long sessionId, String content) {
         InterviewSession session = getOwnedSession(userId, sessionId);
         if (!session.isInProgress()) {
             throw new SessionNotInProgressException(sessionId);
         }
-        int seq = (int) qaLogRepository.countBySessionId(sessionId) + 1;
-        QaLog answer = qaLogRepository.save(QaLog.userAnswer(session, content, seq));
-        return new AnswerResult(answer.getId(), seq, session.getStatus());
+        int answerSeq = (int) qaLogRepository.countBySessionId(sessionId) + 1;
+        QaLog answer = qaLogRepository.save(QaLog.userAnswer(session, content, answerSeq));
+
+        List<QaLog> transcript = qaLogRepository.findBySessionIdOrderBySeqAsc(sessionId);
+        List<Question> pool = questionPool(session, transcript);
+        FollowUpResult followUp = llmClient.generateFollowUp(promptFactory.build(pool, transcript));
+
+        List<AnswerResult.FollowUpView> views = new ArrayList<>();
+        int seq = answerSeq;
+        for (String question : followUp.followUpQuestions()) {
+            QaLog saved = qaLogRepository.save(QaLog.followUp(session, question, ++seq));
+            views.add(new AnswerResult.FollowUpView(saved.getId(), saved.getSeq(), saved.getContent()));
+        }
+        return new AnswerResult(answer.getId(), answerSeq, views, session.getStatus());
     }
 
     /** 세션을 정상 종료한다(소유자만). 진행 중이 아니면 도메인이 거부한다. */
@@ -119,6 +141,28 @@ public class SessionService {
             throw new NoAvailableQuestionException();
         }
         return openings.get(ThreadLocalRandom.current().nextInt(openings.size()));
+    }
+
+    /** 꼬리질문 프롬프트에 주입할 참고 질문 풀. 세션 카테고리(없으면 첫 질문의 카테고리) 기준. */
+    private List<Question> questionPool(InterviewSession session, List<QaLog> transcript) {
+        Set<Long> categoryIds = session.getCategoryIds().isEmpty()
+                ? openingCategoryIds(transcript)
+                : session.getCategoryIds();
+        if (categoryIds.isEmpty()) {
+            return List.of();
+        }
+        return questionRepository.findByCategoryIdIn(categoryIds).stream()
+                .limit(QUESTION_POOL_SIZE)
+                .toList();
+    }
+
+    private Set<Long> openingCategoryIds(List<QaLog> transcript) {
+        return transcript.stream()
+                .map(QaLog::getQuestion)
+                .filter(q -> q != null)
+                .findFirst()
+                .map(q -> Set.of(q.getCategory().getId()))
+                .orElseGet(Set::of);
     }
 
     private InterviewSession getOwnedSession(Long userId, Long sessionId) {
