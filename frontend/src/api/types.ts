@@ -82,3 +82,19 @@ export interface SessionStatusResponse {
   status: SessionStatus;
   endedAt: string | null;
 }
+
+// --- 평가 리포트 (docs/아키텍처.md 5.2, 결정사항 D28) ---
+
+export interface ConceptScore {
+  concept: string;
+  accuracy: number; // 1~5
+  depth: number; // 1~5
+  missedKeywords: string[];
+  modelAnswer: string | null;
+}
+
+export interface EvaluationReport {
+  sessionId: number;
+  concepts: ConceptScore[];
+  overallComment: string | null;
+}
