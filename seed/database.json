@@ -1,0 +1,242 @@
+[
+  {
+    "category": "데이터베이스",
+    "topic": "키(Key)",
+    "content": "데이터베이스의 키 종류(기본키, 후보키, 슈퍼키, 대체키, 외래키)를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["슈퍼키(유일성)", "후보키(유일성+최소성)", "기본키(선택된 후보키)", "대체키(선택 안 된 후보키)", "외래키(다른 테이블 참조)"],
+    "model_answer": "슈퍼키는 튜플을 유일하게 식별하는 속성 집합(유일성만 만족)이다. 후보키는 유일성과 최소성을 모두 만족하는 키이며, 그중 대표로 선택한 것이 기본키(PK), 선택되지 않은 나머지가 대체키다. 외래키(FK)는 다른 테이블의 기본키를 참조해 테이블 간 관계와 참조 무결성을 만든다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%5BDB%5D%20Key.md",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "키(Key)",
+    "content": "기본키(Primary Key)의 조건과 특징은 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["NOT NULL", "UNIQUE", "유일 식별", "변하지 않는 값 권장"],
+    "model_answer": "기본키는 테이블의 각 행을 유일하게 식별하는 키로, NULL을 가질 수 없고(NOT NULL) 값이 중복되면 안 된다(UNIQUE). 한 테이블에 하나만 존재하며, 자주 바뀌지 않는 값을 쓰는 것이 좋다. 그래서 실무에서는 의미 없는 대리키(auto increment id 등)를 자주 사용한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%5BDB%5D%20Key.md",
+    "is_opening": false
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "JOIN",
+    "content": "INNER JOIN과 OUTER JOIN(LEFT/RIGHT/FULL)의 차이를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["INNER=양쪽 일치(교집합)", "LEFT/RIGHT=한쪽 전부+매칭", "FULL=양쪽 전부", "NULL 채움"],
+    "model_answer": "INNER JOIN은 두 테이블에서 조인 조건이 일치하는 행만 반환한다(교집합). LEFT/RIGHT OUTER JOIN은 한쪽 테이블의 모든 행을 남기고 반대쪽은 매칭되는 값만 붙이며, 매칭이 없으면 NULL로 채운다. FULL OUTER JOIN은 양쪽 테이블의 모든 행을 다 포함한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%5BDatabase%20SQL%5D%20JOIN.md",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "JOIN",
+    "content": "CROSS JOIN과 SELF JOIN은 각각 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["CROSS=카티션 곱(모든 조합)", "SELF=자기 자신과 조인", "별칭(alias) 사용"],
+    "model_answer": "CROSS JOIN은 조인 조건 없이 두 테이블의 모든 행을 조합하는 카티션 곱으로, 결과 행 수가 두 테이블 행 수의 곱이 된다. SELF JOIN은 한 테이블을 자기 자신과 조인하는 것으로, 같은 테이블에 별칭을 두 개 붙여 계층 구조(예: 직원-상사)를 조회할 때 쓴다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%5BDatabase%20SQL%5D%20JOIN.md",
+    "is_opening": false
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "SQL Injection",
+    "content": "SQL Injection이 무엇이고 어떻게 방어하나요?",
+    "difficulty": 2,
+    "keywords": ["입력값으로 쿼리 조작", "PreparedStatement(파라미터 바인딩)", "입력 검증", "최소 권한"],
+    "model_answer": "SQL Injection은 사용자 입력에 악의적인 SQL 조각을 넣어 원래 의도와 다른 쿼리를 실행시키는 공격이다(예: ' OR '1'='1). 방어의 핵심은 PreparedStatement로 파라미터를 바인딩해 입력을 데이터로만 취급하게 하는 것이다. 추가로 입력값 검증, DB 계정 최소 권한, 에러 메시지 노출 최소화를 함께 적용한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/SQL%20Injection.md",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "SQL Injection",
+    "content": "Statement와 PreparedStatement의 차이는 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["PreparedStatement=파라미터 바인딩", "쿼리 사전 컴파일/캐싱", "injection 방어", "성능"],
+    "model_answer": "Statement는 SQL 문자열을 그대로 실행해 매번 파싱·컴파일하고, 입력을 문자열로 이어붙이므로 SQL Injection에 취약하다. PreparedStatement는 쿼리 틀을 미리 컴파일해두고 ? 자리에 값을 바인딩하므로, 입력이 쿼리 구조를 바꾸지 못해 injection을 방어하고 같은 쿼리 재사용 시 성능도 좋다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/SQL%20Injection.md",
+    "is_opening": false
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "SQL과 NoSQL",
+    "content": "관계형 데이터베이스(SQL)와 NoSQL의 차이를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["고정 스키마 vs 유연한 스키마", "정형 데이터/관계 vs 비정형", "수직 확장 vs 수평 확장", "ACID vs BASE"],
+    "model_answer": "SQL(관계형 DB)은 미리 정한 고정 스키마와 테이블·관계로 데이터를 저장하고, JOIN과 ACID 트랜잭션에 강하며 주로 수직 확장을 한다. NoSQL은 스키마가 유연해 비정형·대용량 데이터에 적합하고 수평 확장(scale-out)이 쉽지만, 관계·조인·강한 일관성 보장은 약한 편(BASE)이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/SQL%EA%B3%BC%20NOSQL%EC%9D%98%20%EC%B0%A8%EC%9D%B4.md",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "SQL과 NoSQL",
+    "content": "NoSQL의 종류에는 어떤 것들이 있고, NoSQL이 유리한 상황은 언제인가요?",
+    "difficulty": 2,
+    "keywords": ["Key-Value/Document/Column/Graph", "대용량·유연한 스키마", "수평 확장", "빠른 읽기/쓰기"],
+    "model_answer": "NoSQL은 Key-Value(Redis), Document(MongoDB), Column-family(Cassandra), Graph(Neo4j) 등으로 나뉜다. 스키마가 자주 바뀌거나 정해지지 않은 경우, 대용량 데이터를 여러 서버로 수평 확장해야 하는 경우, 관계보다 빠른 읽기/쓰기 성능이 중요한 경우에 유리하다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/SQL%EA%B3%BC%20NOSQL%EC%9D%98%20%EC%B0%A8%EC%9D%B4.md",
+    "is_opening": false
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "SQL과 NoSQL",
+    "content": "CAP 이론(CAP Theorem)에 대해 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["Consistency(일관성)", "Availability(가용성)", "Partition tolerance(분할 내성)", "셋 중 둘만 보장"],
+    "model_answer": "CAP 이론은 분산 시스템이 일관성(Consistency), 가용성(Availability), 네트워크 분할 내성(Partition tolerance) 세 가지를 동시에 완벽히 만족할 수 없고 최대 둘까지만 보장할 수 있다는 이론이다. 분산 환경에서는 네트워크 분할(P)이 불가피하므로 실질적으로 일관성(CP)과 가용성(AP) 사이에서 선택하게 된다.",
+    "source_url": "https://github.com/jbee37142/Interview_Question_for_Beginner/tree/main/Database",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "정규화",
+    "content": "정규화(Normalization)란 무엇이고 왜 하나요?",
+    "difficulty": 2,
+    "keywords": ["데이터 중복 최소화", "이상(anomaly) 방지", "함수 종속 분해", "무결성 유지"],
+    "model_answer": "정규화는 데이터 중복을 줄이고 삽입·갱신·삭제 이상을 방지하기 위해, 함수 종속성에 따라 테이블을 여러 개로 분해하는 과정이다. 중복이 줄어 저장 공간을 아끼고 데이터 무결성을 지키기 쉬워진다. 대신 테이블이 나뉘어 조회 시 JOIN이 늘어나는 트레이드오프가 있다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%EC%A0%95%EA%B7%9C%ED%99%94(Normalization).md",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "정규화",
+    "content": "제1정규형(1NF), 제2정규형(2NF), 제3정규형(3NF)을 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["1NF: 원자값(더 이상 분해X)", "2NF: 부분 함수 종속 제거", "3NF: 이행 함수 종속 제거"],
+    "model_answer": "1NF는 모든 속성이 원자값(더 나눌 수 없는 하나의 값)을 갖도록 한다. 2NF는 1NF를 만족하면서 기본키의 일부에만 종속되는 부분 함수 종속을 제거한다(복합키일 때 문제). 3NF는 2NF를 만족하면서 기본키가 아닌 속성이 다른 일반 속성에 종속되는 이행 함수 종속을 제거한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%EC%A0%95%EA%B7%9C%ED%99%94(Normalization).md",
+    "is_opening": false
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "정규화",
+    "content": "정규화와 반정규화(De-normalization)의 트레이드오프는 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["정규화=무결성↑/JOIN↑", "반정규화=중복 허용/조회 성능↑", "쓰기 vs 읽기"],
+    "model_answer": "정규화는 중복을 없애 무결성을 지키지만 테이블이 나뉘어 조회 시 JOIN이 많아져 읽기 성능이 떨어질 수 있다. 반정규화는 의도적으로 중복을 허용하거나 테이블을 합쳐 JOIN을 줄여 조회 성능을 높이지만, 데이터 갱신 시 여러 곳을 함께 고쳐야 해 무결성 관리 부담이 커진다. 읽기가 많고 성능이 중요한 곳에서 선택적으로 반정규화한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%EC%A0%95%EA%B7%9C%ED%99%94(Normalization).md",
+    "is_opening": false
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "이상(Anomaly)",
+    "content": "데이터 이상(Anomaly) 현상 세 가지(삽입/갱신/삭제 이상)를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["삽입 이상(불필요 데이터 강제)", "갱신 이상(일부만 수정→불일치)", "삭제 이상(필요 데이터 함께 삭제)"],
+    "model_answer": "정규화가 안 된 테이블에서 중복 때문에 생기는 부작용이다. 삽입 이상은 원치 않는 데이터까지 있어야만 삽입되는 현상, 갱신 이상은 중복된 값 중 일부만 수정해 데이터가 불일치해지는 현상, 삭제 이상은 한 데이터를 지우면 함께 있어야 할 다른 정보까지 사라지는 현상이다. 정규화로 이를 해소한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%5BDB%5D%20Anomaly.md",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "인덱스",
+    "content": "데이터베이스 인덱스(Index)란 무엇이고 왜 사용하나요?",
+    "difficulty": 1,
+    "keywords": ["검색 속도 향상", "색인 자료구조(B+Tree)", "풀 스캔 회피", "책 목차 비유"],
+    "model_answer": "인덱스는 테이블 컬럼을 색인화해 검색 속도를 높이는 자료구조로, 책의 목차와 같다. 인덱스가 없으면 레코드를 처음부터 전부 훑는 풀 스캔을 하지만, 인덱스(주로 B+Tree)를 쓰면 정렬된 색인에서 O(logN)으로 원하는 위치를 빠르게 찾는다. 추가 저장 공간과 쓰기 비용을 대가로 읽기 속도를 얻는 기술이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%5BDB%5D%20Index.md",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "인덱스",
+    "content": "인덱스의 단점(트레이드오프)은 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["추가 저장 공간", "INSERT/UPDATE/DELETE 성능 저하", "인덱스 재정렬/조각화", "과도한 인덱스 역효과"],
+    "model_answer": "인덱스는 별도 저장 공간을 차지하고, 데이터가 바뀔 때마다 인덱스도 갱신해야 하므로 INSERT·UPDATE·DELETE 성능이 떨어진다. 특히 삽입 시 인덱스 분할, 삭제 시 사용 안 함 표시 등으로 조각화가 생겨 주기적 재작성이 필요할 수 있다. 그래서 인덱스를 무분별하게 많이 걸면 오히려 성능이 나빠진다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%5BDB%5D%20Index.md",
+    "is_opening": false
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "인덱스",
+    "content": "인덱스를 걸면 좋은 컬럼과 피해야 하는 컬럼은 각각 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["좋음: WHERE/JOIN/FK 자주 쓰는 컬럼", "피함: 중복도 높은 컬럼, DML 잦은 컬럼", "카디널리티"],
+    "model_answer": "WHERE 절 조건, JOIN, 외래키로 자주 검색되는 컬럼은 인덱스 효과가 크다. 반대로 값의 중복도가 높아(성별처럼 카디널리티가 낮아) 걸러지는 범위가 넓은 컬럼이나, 삽입·수정·삭제(DML)가 잦은 컬럼은 갱신 비용만 커져 인덱스를 피하는 게 좋다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%5BDB%5D%20Index.md",
+    "is_opening": false
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "인덱스",
+    "content": "인덱스 자료구조로 B+Tree와 Hash를 비교해주세요.",
+    "difficulty": 3,
+    "keywords": ["B+Tree: 범위/정렬 검색, O(logN)", "Hash: 등호 검색 O(1), 범위 불가", "대부분 B+Tree 사용"],
+    "model_answer": "B+Tree 인덱스는 정렬된 균형 트리라 등호뿐 아니라 부등호·범위 검색과 정렬에 강하고 O(logN)을 보장해 대부분의 DB가 기본으로 쓴다. Hash 인덱스는 해시 함수로 값을 인덱스화해 등호(=) 검색은 평균 O(1)로 매우 빠르지만, 값을 해싱하므로 범위(<, >)·정렬 검색에는 쓸 수 없다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%5BDB%5D%20Index.md",
+    "is_opening": false
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "트랜잭션",
+    "content": "트랜잭션(Transaction)이란 무엇이고 ACID란 무엇인가요?",
+    "difficulty": 1,
+    "keywords": ["논리적 작업 단위", "원자성(Atomicity)", "일관성(Consistency)", "격리성(Isolation)", "지속성(Durability)"],
+    "model_answer": "트랜잭션은 데이터베이스의 상태를 바꾸는 하나의 논리적 작업 단위로, 여러 연산을 '모두 성공' 또는 '모두 실패'로 처리한다. 이를 위해 ACID를 보장한다 — 원자성(전부 반영 또는 전부 취소), 일관성(제약을 지킨 상태 유지), 격리성(동시 트랜잭션 간 간섭 차단), 지속성(커밋된 결과는 영구 보존).",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/Transaction.md",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "트랜잭션",
+    "content": "트랜잭션의 Commit과 Rollback을 설명해주세요.",
+    "difficulty": 1,
+    "keywords": ["Commit=변경 확정/영구 반영", "Rollback=변경 취소/이전 상태 복구", "원자성 보장"],
+    "model_answer": "Commit은 트랜잭션의 모든 연산이 성공했을 때 변경 사항을 확정해 DB에 영구 반영하는 것이다. Rollback은 중간에 오류가 나거나 취소가 필요할 때 트랜잭션이 시작되기 전 상태로 되돌리는 것이다. 이 둘로 '전부 성공 또는 전부 취소'라는 원자성을 구현한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/Transaction.md",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "트랜잭션 격리 수준",
+    "content": "트랜잭션 격리 수준(Isolation Level) 4단계를 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["Read Uncommitted", "Read Committed", "Repeatable Read", "Serializable", "동시성 vs 무결성"],
+    "model_answer": "낮은 것부터 Read Uncommitted(커밋 안 된 데이터도 읽음), Read Committed(커밋된 데이터만 읽음, 대부분 DB 기본값), Repeatable Read(트랜잭션 동안 같은 조회 결과 보장, MySQL 기본값), Serializable(완전한 직렬화, 가장 엄격)이다. 레벨이 높을수록 무결성은 강해지지만 동시성이 떨어지고 비용이 커진다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/Transaction%20Isolation%20Level.md",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "트랜잭션 격리 수준",
+    "content": "Dirty Read, Non-Repeatable Read, Phantom Read가 각각 무엇인가요?",
+    "difficulty": 3,
+    "keywords": ["Dirty Read(커밋 전 데이터 읽음)", "Non-Repeatable Read(같은 행 재조회 시 값 달라짐)", "Phantom Read(범위 재조회 시 새 행 등장)"],
+    "model_answer": "Dirty Read는 커밋되지 않은 다른 트랜잭션의 변경을 읽는 현상(Read Uncommitted에서 발생). Non-Repeatable Read는 한 트랜잭션에서 같은 행을 두 번 읽었는데 사이에 다른 트랜잭션이 수정/삭제해 값이 달라지는 현상(Read Committed 이하). Phantom Read는 같은 범위를 두 번 조회했을 때 없던 행이 새로 나타나는 현상(Repeatable Read 이하)이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/Transaction%20Isolation%20Level.md",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "트랜잭션 격리 수준",
+    "content": "격리 수준을 높이면 어떤 트레이드오프가 생기나요?",
+    "difficulty": 2,
+    "keywords": ["동시성↓", "무결성/일관성↑", "락 범위↑, 대기 증가", "비용 증가"],
+    "model_answer": "격리 수준을 높이면 더 넓은 범위에 락을 걸어 다른 트랜잭션의 접근을 막으므로 데이터 무결성·일관성은 좋아진다. 하지만 그만큼 동시에 처리되는 트랜잭션이 대기하게 되어 동시성이 떨어지고 성능 비용이 커진다. 그래서 서비스 특성에 맞게 무결성과 동시성 사이에서 적절한 레벨을 고른다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/Transaction%20Isolation%20Level.md",
+    "is_opening": false
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "저장 프로시저",
+    "content": "저장 프로시저(Stored Procedure)란 무엇이고 장단점은 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["미리 컴파일된 SQL 묶음", "성능/재사용/네트워크 트래픽 감소", "유지보수·이식성·디버깅 어려움"],
+    "model_answer": "저장 프로시저는 일련의 SQL 문을 하나로 묶어 DB에 미리 저장·컴파일해두고 호출하는 것이다. 미리 컴파일돼 있어 실행이 빠르고, 여러 쿼리를 한 번의 호출로 처리해 네트워크 트래픽을 줄이며 재사용성이 좋다. 반면 로직이 DB에 묶여 유지보수·버전 관리·디버깅이 어렵고 DB 이식성이 떨어진다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/%EC%A0%80%EC%9E%A5%20%ED%94%84%EB%A1%9C%EC%8B%9C%EC%A0%80(Stored%20PROCEDURE).md",
+    "is_opening": true
+  },
+  {
+    "category": "데이터베이스",
+    "topic": "Redis",
+    "content": "Redis란 무엇이고 어떤 용도로 사용하나요?",
+    "difficulty": 2,
+    "keywords": ["인메모리 Key-Value 저장소", "매우 빠른 읽기/쓰기", "캐시/세션/랭킹/큐", "영속화(RDB/AOF)"],
+    "model_answer": "Redis는 데이터를 메모리에 저장하는 인메모리 Key-Value 저장소로, 디스크 기반 DB보다 읽기/쓰기가 매우 빠르다. 주로 캐시, 세션 저장, 실시간 랭킹(Sorted Set), 메시지 큐 등에 쓰인다. 메모리 기반이라 휘발성이지만 RDB 스냅샷·AOF 로그로 영속화도 지원한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Database/Redis.md",
+    "is_opening": true
+  }
+]
