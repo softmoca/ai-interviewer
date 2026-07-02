@@ -41,11 +41,12 @@ public class SessionService {
     private final UserRepository userRepository;
     private final LlmClient llmClient;
     private final FollowUpPromptFactory promptFactory;
+    private final SessionAccessGuard sessionAccessGuard;
 
     public SessionService(InterviewSessionRepository sessionRepository, QaLogRepository qaLogRepository,
                           QuestionRepository questionRepository, CategoryRepository categoryRepository,
                           UserRepository userRepository, LlmClient llmClient,
-                          FollowUpPromptFactory promptFactory) {
+                          FollowUpPromptFactory promptFactory, SessionAccessGuard sessionAccessGuard) {
         this.sessionRepository = sessionRepository;
         this.qaLogRepository = qaLogRepository;
         this.questionRepository = questionRepository;
@@ -53,6 +54,7 @@ public class SessionService {
         this.userRepository = userRepository;
         this.llmClient = llmClient;
         this.promptFactory = promptFactory;
+        this.sessionAccessGuard = sessionAccessGuard;
     }
 
     /** 세션을 시작하고 첫 질문(오프닝)을 서빙한다. */
@@ -76,7 +78,7 @@ public class SessionService {
     /** 사용자 답변을 기록하고 꼬리질문 1~2개를 생성해 저장한다(진행 중 세션만, 소유자만). */
     @Transactional
     public AnswerResult submitAnswer(Long userId, Long sessionId, String content) {
-        InterviewSession session = getOwnedSession(userId, sessionId);
+        InterviewSession session = sessionAccessGuard.getOwned(userId, sessionId);
         if (!session.isInProgress()) {
             throw new SessionNotInProgressException(sessionId);
         }
@@ -99,7 +101,7 @@ public class SessionService {
     /** 세션을 정상 종료한다(소유자만). 진행 중이 아니면 도메인이 거부한다. */
     @Transactional
     public SessionStatusResult completeSession(Long userId, Long sessionId) {
-        InterviewSession session = getOwnedSession(userId, sessionId);
+        InterviewSession session = sessionAccessGuard.getOwned(userId, sessionId);
         session.complete(LocalDateTime.now());
         return new SessionStatusResult(session.getId(), session.getStatus(), session.getEndedAt());
     }
@@ -107,7 +109,7 @@ public class SessionService {
     /** 세션 상세(설정·상태 + 대화 이력)를 조회한다(소유자만). */
     @Transactional(readOnly = true)
     public SessionDetailResult getSession(Long userId, Long sessionId) {
-        InterviewSession session = getOwnedSession(userId, sessionId);
+        InterviewSession session = sessionAccessGuard.getOwned(userId, sessionId);
         List<SessionDetailResult.QaLogEntry> transcript =
                 qaLogRepository.findBySessionIdOrderBySeqAsc(sessionId).stream()
                         .map(l -> new SessionDetailResult.QaLogEntry(l.getSeq(), l.getRole(),
@@ -163,14 +165,5 @@ public class SessionService {
                 .findFirst()
                 .map(q -> Set.of(q.getCategory().getId()))
                 .orElseGet(Set::of);
-    }
-
-    private InterviewSession getOwnedSession(Long userId, Long sessionId) {
-        InterviewSession session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new SessionNotFoundException(sessionId));
-        if (!session.getUser().getId().equals(userId)) {
-            throw new SessionAccessDeniedException();
-        }
-        return session;
     }
 }
