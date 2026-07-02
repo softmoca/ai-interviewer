@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ApiError } from '../api/client';
 import { generateEvaluation } from '../api/evaluation';
@@ -11,6 +11,8 @@ export function EvaluationReportPage() {
   const [report, setReport] = useState<EvaluationReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // 평가 생성 POST가 한 번만 나가도록 가드(React StrictMode의 이중 마운트로 중복 생성되던 문제 방지)
+  const requestedSessionId = useRef<number | null>(null);
 
   useEffect(() => {
     if (!Number.isFinite(sessionId)) {
@@ -18,6 +20,11 @@ export function EvaluationReportPage() {
       setLoading(false);
       return;
     }
+    if (requestedSessionId.current === sessionId) {
+      return; // 같은 세션에 대한 중복 요청 방지
+    }
+    requestedSessionId.current = sessionId;
+
     let active = true;
     // 멱등 생성: 최초엔 LLM으로 평가 생성, 이후엔 저장된 리포트 반환
     generateEvaluation(sessionId)
