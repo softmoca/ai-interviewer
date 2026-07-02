@@ -6,6 +6,8 @@ import com.aiinterviewer.application.session.CategoryNotFoundException;
 import com.aiinterviewer.application.session.NoAvailableQuestionException;
 import com.aiinterviewer.application.session.SessionAccessDeniedException;
 import com.aiinterviewer.application.session.SessionNotFoundException;
+import com.aiinterviewer.application.evaluation.EvaluationNotFoundException;
+import com.aiinterviewer.application.evaluation.SessionNotCompletedException;
 import com.aiinterviewer.application.session.SessionNotInProgressException;
 import com.aiinterviewer.llm.LlmCallException;
 import com.aiinterviewer.llm.LlmNotConfiguredException;
@@ -39,7 +41,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({SessionNotFoundException.class, CategoryNotFoundException.class,
-            NoAvailableQuestionException.class})
+            NoAvailableQuestionException.class, EvaluationNotFoundException.class})
     public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse("NOT_FOUND", e.getMessage()));
@@ -51,8 +53,9 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("ACCESS_DENIED", e.getMessage()));
     }
 
-    /** 진행 중 아님 등 상태 충돌(세션 재종료 IllegalStateException 포함) → 409. */
-    @ExceptionHandler({SessionNotInProgressException.class, IllegalStateException.class})
+    /** 상태 충돌(진행 중 아님/미완료 세션 평가/세션 재종료 IllegalStateException) → 409. */
+    @ExceptionHandler({SessionNotInProgressException.class, SessionNotCompletedException.class,
+            IllegalStateException.class})
     public ResponseEntity<ErrorResponse> handleConflict(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse("CONFLICT", e.getMessage()));

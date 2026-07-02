@@ -21,6 +21,10 @@ public class FakeLlmClient implements LlmClient {
 
     @Override
     public EvaluationResult evaluate(String prompt) {
-        throw new UnsupportedOperationException("평가는 다음 슬라이스");
+        return new EvaluationResult(
+                List.of(new EvaluationResult.ConceptEvaluation(
+                        "프로세스와 스레드", 4, 3, List.of("PCB", "context switching"),
+                        "프로세스는 독립 메모리, 스레드는 공유 메모리를 가진다.")),
+                "개념 이해는 양호하나 세부 메커니즘 설명의 깊이가 부족합니다.");
     }
 }
