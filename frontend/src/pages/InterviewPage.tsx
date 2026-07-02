@@ -63,13 +63,16 @@ export function InterviewPage() {
       const lastSeq = transcript.length ? transcript[transcript.length - 1].seq : 0;
       const appended: QaLogEntry[] = [
         { seq: lastSeq + 1, role: 'USER', content, followUp: false },
-        ...result.followUps.map((f) => ({
-          seq: f.seq,
-          role: 'INTERVIEWER' as const,
-          content: f.content,
-          followUp: true,
-        })),
       ];
+      // 다음 꼬리질문은 한 번에 하나만 온다(순차 큐잉 — D36)
+      if (result.nextQuestion) {
+        appended.push({
+          seq: result.nextQuestion.seq,
+          role: 'INTERVIEWER',
+          content: result.nextQuestion.content,
+          followUp: true,
+        });
+      }
       setTranscript((prev) => [...prev, ...appended]);
       setStatus(result.status);
       setAnswer('');
