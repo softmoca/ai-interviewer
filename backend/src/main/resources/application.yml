@@ -2,28 +2,23 @@ spring:
   application:
     name: ai-interviewer
 
-  # 개발 초기 DB: H2 인메모리 (PostgreSQL 호환 모드 — 문법 차이로 인한 사고 방지)
-  # 이후 로컬 Docker PostgreSQL -> AWS RDS 로 전환 (docs/아키텍처.md 3번)
+  # 로컬 개발 DB: Docker MySQL (결정사항 D34). `docker compose up -d` 후 실행.
+  # 값은 docker-compose.yml 기본과 일치하며, 필요 시 환경변수(DB_URL/DB_USERNAME/DB_PASSWORD)로 덮는다.
+  # (테스트는 src/test/resources/application.yml 의 H2를 사용 — MySQL/Docker 불필요)
   datasource:
-    url: jdbc:h2:mem:aiinterviewer;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/aiinterviewer?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8}
+    username: ${DB_USERNAME:aiinterviewer}
+    password: ${DB_PASSWORD:aiinterviewer}
 
   jpa:
     hibernate:
-      # 개발 단계: 스키마 자동 생성. 운영 전환 시 validate/none 으로 조정.
-      ddl-auto: create-drop
+      # 로컬 개발: 스키마 자동 반영(데이터 유지). 운영 전환 시 validate/none + 마이그레이션 도구.
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
     show-sql: true
     open-in-view: false
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
 
 # CORS 허용 오리진 (결정사항 D29) — 프론트가 백엔드를 직접 호출할 때. 쉼표로 여러 개 지정.
 app:

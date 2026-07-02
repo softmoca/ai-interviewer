@@ -11,7 +11,7 @@
 ## 기술 스택
 - 백엔드: **Spring Boot** (Gradle), Spring Data JPA, Spring Security + JWT
 - 프론트엔드: **React** (Vite 권장)
-- DB: **H2**(개발 초기) → **로컬 Docker PostgreSQL**(주력) → **AWS RDS**(배포)
+- DB: **로컬 Docker MySQL**(주력) · **H2**(테스트) → **AWS RDS**(배포) — 결정사항 D34
 - LLM: 외부 LLM API (꼬리질문 생성 + 평가). 응답은 JSON으로 받아 파싱.
 
 ## 폴더 구조

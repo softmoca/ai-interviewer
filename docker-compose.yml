@@ -1,0 +1,28 @@
+# 로컬 개발용 MySQL (결정사항 D34). DataGrip 등 외부 툴로 5432가 아닌 3306에 접속해 관찰.
+# 사용법: docker compose up -d  →  백엔드 ./gradlew bootRun
+# 데이터는 named volume에 영속(재시작해도 유지). 테스트는 H2를 쓰므로 이 컨테이너가 필요 없다.
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ai-interviewer-mysql
+    environment:
+      MYSQL_DATABASE: aiinterviewer
+      MYSQL_USER: aiinterviewer
+      MYSQL_PASSWORD: aiinterviewer
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Seoul
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    volumes:
+      - ai-interviewer-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  ai-interviewer-mysql-data:
