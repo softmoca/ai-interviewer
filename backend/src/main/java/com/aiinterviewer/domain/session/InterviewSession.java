@@ -111,6 +111,11 @@ public class InterviewSession extends BaseTimeEntity {
         return this.status == SessionStatus.IN_PROGRESS;
     }
 
+    /** 정상 종료된 세션인지. 평가는 완료된 세션에만 허용한다. */
+    public boolean isCompleted() {
+        return this.status == SessionStatus.COMPLETED;
+    }
+
     private void finish(SessionStatus target, LocalDateTime endedAt) {
         if (!isInProgress()) {
             throw new IllegalStateException("진행 중인 세션만 종료할 수 있습니다. 현재 상태=" + this.status);

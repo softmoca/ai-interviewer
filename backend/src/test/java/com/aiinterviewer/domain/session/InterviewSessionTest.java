@@ -68,6 +68,20 @@ class InterviewSessionTest {
                 softly.assertThat(session.getStatus()).isEqualTo(SessionStatus.COMPLETED);
                 softly.assertThat(session.getEndedAt()).isEqualTo(ENDED_AT);
                 softly.assertThat(session.isInProgress()).isFalse();
+                softly.assertThat(session.isCompleted()).isTrue();
+            });
+        }
+
+        @Test
+        @DisplayName("진행 중/중단 세션은 완료 상태가 아니다")
+        void isCompletedOnlyWhenCompleted() {
+            InterviewSession inProgress = new InterviewSession();
+            InterviewSession abandoned = new InterviewSession();
+            abandoned.abandon(ENDED_AT);
+
+            assertSoftly(softly -> {
+                softly.assertThat(inProgress.isCompleted()).isFalse();
+                softly.assertThat(abandoned.isCompleted()).isFalse();
             });
         }
 
