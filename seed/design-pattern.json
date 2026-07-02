@@ -1,0 +1,142 @@
+[
+  {
+    "category": "디자인패턴",
+    "topic": "디자인 패턴 개요",
+    "content": "디자인 패턴이란 무엇이고, GoF 패턴은 어떻게 분류되나요?",
+    "difficulty": 2,
+    "keywords": ["반복되는 설계 문제의 검증된 해결책", "생성(Creational)", "구조(Structural)", "행위(Behavioral)"],
+    "model_answer": "디자인 패턴은 소프트웨어 설계에서 자주 마주치는 문제에 대한 검증된 재사용 가능한 해결책이자 개발자 간 공통 어휘다. GoF(Gang of Four) 패턴은 목적에 따라 객체 생성을 다루는 생성 패턴(싱글톤·팩토리 등), 클래스·객체 구성을 다루는 구조 패턴(어댑터·컴포지트 등), 객체 간 상호작용·책임을 다루는 행위 패턴(전략·옵저버·템플릿 메서드 등)으로 분류된다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/%5BDesign%20Pattern%5D%20Overview.md",
+    "is_opening": true
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "디자인 패턴 개요",
+    "content": "디자인 패턴을 사용할 때의 장점과 주의할 점은 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["검증된 구조·유지보수성", "공통 소통 언어", "남용 시 과설계(over-engineering)", "문제에 맞게 적용"],
+    "model_answer": "장점은 검증된 구조라 유지보수·확장에 유리하고, '이건 옵저버로 하자' 같은 공통 언어로 소통이 쉬워진다는 점이다. 주의할 점은 패턴을 목적이 아니라 수단으로 봐야 한다는 것이다. 단순한 문제에 억지로 패턴을 끼워 넣으면 오히려 코드가 복잡해지는 과설계가 되므로, 실제 문제가 있을 때 적절히 적용해야 한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/%5BDesign%20Pattern%5D%20Overview.md",
+    "is_opening": false
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "싱글톤 패턴",
+    "content": "싱글톤(Singleton) 패턴이란 무엇이고 어디에 사용하나요?",
+    "difficulty": 1,
+    "keywords": ["인스턴스 하나만 생성", "전역 접근점", "설정·로거·커넥션 풀·캐시"],
+    "model_answer": "싱글톤은 클래스의 인스턴스가 프로그램 전체에서 단 하나만 존재하도록 보장하고 그 인스턴스에 전역적으로 접근하게 하는 패턴이다. 생성자를 막고 정적 메서드로 유일 인스턴스를 반환한다. 설정 관리자, 로거, DB 커넥션 풀, 캐시처럼 하나만 있으면 되고 공유되어야 하는 자원에 쓰인다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/Singleton%20Pattern.md",
+    "is_opening": true
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "싱글톤 패턴",
+    "content": "싱글톤 패턴의 문제점(단점)은 무엇인가요?",
+    "difficulty": 3,
+    "keywords": ["전역 상태→결합도↑", "테스트 어려움(모킹 힘듦)", "멀티스레드 동시성 문제", "SRP 위반 소지"],
+    "model_answer": "싱글톤은 전역 상태를 만들어 여러 모듈이 그것에 의존하게 되므로 결합도가 높아지고, 의존성이 숨겨져 테스트 시 대체(mock)하기 어렵다. 또 여러 스레드가 동시에 인스턴스를 생성하려 하면 인스턴스가 둘 생길 수 있는 동시성 문제가 있다. 그래서 스프링에서는 직접 싱글톤을 만들기보다 컨테이너가 빈을 싱글톤으로 관리하게 해 이런 단점을 완화한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/Singleton%20Pattern.md",
+    "is_opening": true
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "싱글톤 패턴",
+    "content": "멀티스레드 환경에서 안전한 싱글톤을 구현하는 방법에는 어떤 것이 있나요?",
+    "difficulty": 3,
+    "keywords": ["이른 초기화(eager)", "double-checked locking + volatile", "LazyHolder(정적 내부 클래스)", "enum"],
+    "model_answer": "가장 간단한 건 클래스 로딩 시 미리 생성하는 이른 초기화(eager)다. 지연 생성을 원하면 double-checked locking에 volatile을 함께 써 동시성을 막거나, JVM의 클래스 로딩 원자성을 이용하는 정적 내부 클래스(LazyHolder) 방식을 쓴다. 가장 안전하고 간결한 방법은 enum으로 싱글톤을 만드는 것으로, 직렬화·리플렉션 공격에도 안전하다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/Singleton%20Pattern.md",
+    "is_opening": false
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "팩토리 메서드 패턴",
+    "content": "팩토리 메서드(Factory Method) 패턴이란 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["객체 생성을 서브클래스에 위임", "new 캡슐화", "생성 로직 분리", "OCP"],
+    "model_answer": "팩토리 메서드는 객체 생성을 직접 하지 않고 생성 책임을 별도 메서드(또는 서브클래스)에 위임하는 생성 패턴이다. 클라이언트는 구체 클래스를 몰라도 되고 인터페이스에만 의존하므로, 새로운 타입이 생겨도 팩토리만 확장하면 되어 개방-폐쇄 원칙(OCP)을 지키기 쉽다. new로 인한 결합을 줄이는 것이 핵심이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/Design%20Pattern_Factory%20Method.md",
+    "is_opening": true
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "전략 패턴",
+    "content": "전략(Strategy) 패턴이란 무엇이고 어떤 장점이 있나요?",
+    "difficulty": 2,
+    "keywords": ["알고리즘을 인터페이스로 캡슐화", "런타임 교체", "상속 대신 합성(위임)", "OCP"],
+    "model_answer": "전략 패턴은 교체 가능한 알고리즘(전략)들을 각각 클래스로 캡슐화하고, 실행 중에 필요한 전략을 갈아 끼울 수 있게 하는 행위 패턴이다. 조건 분기로 알고리즘을 나누는 대신 인터페이스에 위임하므로, 새 알고리즘을 추가해도 기존 코드를 수정하지 않아 OCP를 만족한다. 상속 대신 합성을 사용하는 대표적 예다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/Strategy%20Pattern.md",
+    "is_opening": true
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "옵저버 패턴",
+    "content": "옵저버(Observer) 패턴이란 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["발행-구독(pub-sub)", "주체 상태 변화 시 구독자에게 통지", "느슨한 결합", "이벤트 처리"],
+    "model_answer": "옵저버 패턴은 한 객체(주체, Subject)의 상태가 바뀌면 그것을 구독하는 여러 옵저버에게 자동으로 통지해 갱신하게 하는 행위 패턴이다. 주체는 옵저버들의 구체 타입을 몰라도 되므로 느슨하게 결합된다. 이벤트 리스너, 알림 시스템, MVC의 모델-뷰 갱신처럼 상태 변화에 반응해야 하는 곳에 쓰인다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/Observer%20pattern.md",
+    "is_opening": true
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "템플릿 메서드 패턴",
+    "content": "템플릿 메서드(Template Method) 패턴이란 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["알고리즘 골격을 상위 클래스에 정의", "세부 단계는 하위 클래스에서 구현", "훅(hook) 메서드", "코드 중복 제거"],
+    "model_answer": "템플릿 메서드는 알고리즘의 전체 흐름(골격)을 상위 클래스의 메서드에 정의하고, 그중 달라지는 세부 단계만 추상 메서드로 두어 하위 클래스가 구현하게 하는 행위 패턴이다. 공통 흐름은 상위에서 재사용하고 변하는 부분만 하위에서 채우므로 코드 중복이 줄어든다. 상속을 기반으로 한다는 점이 전략 패턴과 다르다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/Template%20Method%20Pattern.md",
+    "is_opening": true
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "전략 패턴",
+    "content": "전략 패턴과 템플릿 메서드 패턴의 차이는 무엇인가요?",
+    "difficulty": 3,
+    "keywords": ["전략=합성(위임)·런타임 교체", "템플릿=상속·컴파일타임 고정", "유연성 vs 단순성"],
+    "model_answer": "둘 다 변하는 부분을 분리하지만 방식이 다르다. 전략 패턴은 알고리즘을 인터페이스로 분리해 객체 합성(위임)으로 주입하므로 런타임에 전략을 갈아 끼울 수 있어 유연하다. 템플릿 메서드는 상속으로 상위 클래스의 골격을 하위가 채우므로 컴파일 시점에 고정되고 구조가 단순하다. 유연성이 필요하면 전략, 흐름이 고정적이면 템플릿 메서드가 적합하다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/Strategy%20Pattern.md",
+    "is_opening": false
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "어댑터 패턴",
+    "content": "어댑터(Adapter) 패턴이란 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["호환되지 않는 인터페이스 연결", "래핑(wrapping)", "기존 코드 재사용", "구조 패턴"],
+    "model_answer": "어댑터 패턴은 서로 호환되지 않는 인터페이스를 가진 클래스들을 함께 동작하게 중간에서 변환해주는 구조 패턴이다. 기존 클래스를 감싸(wrapping) 클라이언트가 원하는 인터페이스로 바꿔 제공한다. 이미 있는 코드나 외부 라이브러리를 수정하지 않고 재사용할 때 유용하다(콘센트 변환 어댑터에 비유된다).",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/Adapter%20Pattern.md",
+    "is_opening": true
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "컴포지트 패턴",
+    "content": "컴포지트(Composite) 패턴이란 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["부분-전체 트리 구조", "개별 객체와 복합 객체를 동일하게 취급", "재귀 구조", "구조 패턴"],
+    "model_answer": "컴포지트 패턴은 객체들을 트리 구조로 구성해 부분(leaf)과 전체(composite)를 같은 인터페이스로 동일하게 다루게 하는 구조 패턴이다. 클라이언트는 단일 객체인지 복합 객체인지 구분하지 않고 같은 방식으로 다룰 수 있다. 파일 시스템의 파일/폴더, UI의 컴포넌트 트리처럼 계층적 구조를 표현할 때 쓰인다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/Composite%20Pattern.md",
+    "is_opening": true
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "SOLID 원칙",
+    "content": "객체지향 설계 5원칙(SOLID)을 각각 간단히 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["SRP(단일 책임)", "OCP(개방-폐쇄)", "LSP(리스코프 치환)", "ISP(인터페이스 분리)", "DIP(의존 역전)"],
+    "model_answer": "SRP는 클래스가 변경되는 이유가 하나여야 한다는 단일 책임 원칙, OCP는 확장에는 열려 있고 변경에는 닫혀 있어야 한다는 개방-폐쇄 원칙이다. LSP는 자식 타입이 부모 타입을 대체해도 문제없어야 한다는 리스코프 치환 원칙, ISP는 사용하지 않는 인터페이스에 의존하지 않게 잘게 나누라는 인터페이스 분리 원칙, DIP는 고수준 모듈이 저수준 구현이 아닌 추상에 의존해야 한다는 의존 역전 원칙이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/SOLID.md",
+    "is_opening": true
+  },
+  {
+    "category": "디자인패턴",
+    "topic": "SOLID 원칙",
+    "content": "OCP(개방-폐쇄 원칙)와 DIP(의존 역전 원칙)를 예를 들어 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["OCP=추상화로 확장, 기존 코드 수정 X", "DIP=추상(인터페이스)에 의존", "다형성·인터페이스", "전략/팩토리 패턴과 연결"],
+    "model_answer": "OCP는 새 기능을 추가할 때 기존 코드를 고치지 않고 확장으로 대응하는 것으로, 예를 들어 결제 수단을 인터페이스로 두면 새 결제 수단은 구현체만 추가하면 된다. DIP는 상위 모듈이 구체 클래스가 아니라 인터페이스(추상)에 의존하게 하는 것으로, 서비스가 JDBC 구현이 아닌 Repository 인터페이스에 의존하는 식이다. 두 원칙은 다형성·인터페이스로 달성되며 전략·팩토리 패턴이 이를 구현한 예다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Design%20Pattern/SOLID.md",
+    "is_opening": false
+  }
+]

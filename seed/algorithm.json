@@ -1,0 +1,192 @@
+[
+  {
+    "category": "알고리즘",
+    "topic": "시간 복잡도",
+    "content": "시간 복잡도와 빅오(Big-O) 표기법이 무엇인지 설명해주세요.",
+    "difficulty": 1,
+    "keywords": ["입력 크기 n에 따른 연산 증가율", "최악의 경우 기준", "상수·계수 무시", "O(1)<O(logn)<O(n)<O(nlogn)<O(n^2)"],
+    "model_answer": "시간 복잡도는 입력 크기 n이 커질 때 알고리즘의 연산 횟수가 얼마나 증가하는지를 나타낸다. 빅오 표기법은 그 증가율을 최악의 경우 기준으로, 상수와 낮은 차수 항을 무시하고 가장 지배적인 항으로 표현한다. 대략 O(1) < O(log n) < O(n) < O(n log n) < O(n²) < O(2ⁿ) 순으로 느려진다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/tree/master/Algorithm",
+    "is_opening": true
+  },
+  {
+    "category": "알고리즘",
+    "topic": "시간 복잡도",
+    "content": "시간 복잡도와 공간 복잡도는 어떤 트레이드오프 관계가 있나요?",
+    "difficulty": 2,
+    "keywords": ["시간 vs 메모리", "메모이제이션(시간↓ 공간↑)", "캐싱", "상황에 맞는 선택"],
+    "model_answer": "공간 복잡도는 알고리즘이 쓰는 메모리 양의 증가율이다. 종종 시간과 공간은 트레이드오프 관계인데, 예를 들어 이미 계산한 값을 저장(메모이제이션·캐싱)하면 다시 계산하지 않아 시간은 줄지만 메모리를 더 쓴다. 반대로 메모리를 아끼려면 재계산으로 시간이 늘 수 있어, 제약(메모리 한계/응답 속도)에 맞게 선택한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/tree/master/Algorithm",
+    "is_opening": false
+  },
+  {
+    "category": "알고리즘",
+    "topic": "정렬 개요",
+    "content": "대표적인 정렬 알고리즘들의 시간 복잡도를 비교해주세요.",
+    "difficulty": 2,
+    "keywords": ["버블/선택/삽입 O(n^2)", "병합/힙 O(nlogn)", "퀵 평균 O(nlogn)/최악 O(n^2)", "계수/기수 O(n)"],
+    "model_answer": "버블·선택·삽입 정렬은 단순하지만 평균·최악 O(n²)이다. 병합 정렬과 힙 정렬은 항상 O(n log n)을 보장한다. 퀵 정렬은 평균 O(n log n)으로 실무에서 가장 빠른 편이지만 피벗이 나쁘면 최악 O(n²)이 된다. 계수·기수 정렬은 비교를 하지 않아 특정 조건에서 O(n)이 가능하다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/tree/master/Algorithm",
+    "is_opening": true
+  },
+  {
+    "category": "알고리즘",
+    "topic": "정렬 개요",
+    "content": "안정 정렬(stable sort)이 무엇이고 어떤 정렬이 안정 정렬인가요?",
+    "difficulty": 2,
+    "keywords": ["같은 값의 원래 순서 유지", "안정: 삽입/병합/버블", "불안정: 퀵/힙/선택", "다중 기준 정렬에 중요"],
+    "model_answer": "안정 정렬은 값이 같은 원소들의 원래 입력 순서가 정렬 후에도 유지되는 정렬이다. 삽입·병합·버블 정렬은 안정적이고, 퀵·힙·선택 정렬은 불안정하다. 여러 기준으로 연속 정렬할 때(예: 이름순 후 점수순) 이전 순서를 보존해야 하므로 안정성이 중요해진다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/tree/master/Algorithm",
+    "is_opening": false
+  },
+  {
+    "category": "알고리즘",
+    "topic": "정렬 개요",
+    "content": "실무 언어의 표준 정렬은 왜 하이브리드 알고리즘을 쓰나요?",
+    "difficulty": 3,
+    "keywords": ["Timsort(병합+삽입)", "Introsort(퀵+힙)", "실제 데이터 특성 활용", "최악 성능 보장"],
+    "model_answer": "단일 알고리즘은 장단점이 뚜렷해, 실무에서는 여러 알고리즘을 결합한 하이브리드를 쓴다. 파이썬·자바의 객체 정렬은 Timsort(병합+삽입)로 이미 부분 정렬된 데이터에 강하고 안정적이다. C++ std::sort의 Introsort는 퀵 정렬로 시작해 깊이가 깊어지면 힙 정렬로 전환해 최악 O(n log n)을 보장한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/tree/master/Algorithm",
+    "is_opening": false
+  },
+  {
+    "category": "알고리즘",
+    "topic": "퀵 정렬",
+    "content": "퀵 정렬(Quick Sort)의 동작 원리와 시간 복잡도를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["피벗 선택", "피벗 기준 분할(작은 값/큰 값)", "평균 O(nlogn)", "최악 O(n^2)", "제자리 정렬"],
+    "model_answer": "퀵 정렬은 분할 정복 방식으로, 피벗을 하나 정해 피벗보다 작은 값과 큰 값으로 배열을 분할한 뒤 각 부분을 재귀적으로 정렬한다. 평균적으로 균등하게 분할되어 O(n log n)이고 제자리(in-place) 정렬이라 메모리 효율이 좋다. 다만 피벗이 한쪽으로 치우치면(이미 정렬된 입력 등) 최악 O(n²)이 된다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/QuickSort.md",
+    "is_opening": true
+  },
+  {
+    "category": "알고리즘",
+    "topic": "퀵 정렬",
+    "content": "퀵 정렬의 최악의 경우 O(n²)를 피하려면 어떻게 하나요?",
+    "difficulty": 3,
+    "keywords": ["랜덤 피벗", "median-of-three(세 값의 중앙값)", "치우친 분할 방지"],
+    "model_answer": "최악의 경우는 피벗이 매번 최솟값이나 최댓값으로 뽑혀 분할이 한쪽으로 치우칠 때 발생한다. 이를 피하려면 피벗을 무작위로 고르거나(random pivot), 처음·중간·끝 세 값의 중앙값을 피벗으로 쓰는 median-of-three 기법을 써서 균등 분할 확률을 높인다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/QuickSort.md",
+    "is_opening": false
+  },
+  {
+    "category": "알고리즘",
+    "topic": "병합 정렬",
+    "content": "병합 정렬(Merge Sort)의 동작 원리와 특징을 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["분할 정복", "반으로 나눠 정렬 후 병합", "항상 O(nlogn)", "추가 메모리 O(n)", "안정 정렬"],
+    "model_answer": "병합 정렬은 배열을 반으로 계속 나눠 더 이상 나눌 수 없을 때까지 분할한 뒤, 정렬하면서 두 부분을 병합해 올라가는 분할 정복 알고리즘이다. 입력에 상관없이 항상 O(n log n)을 보장하고 안정 정렬이다. 다만 병합 과정에서 원본 크기만큼의 추가 메모리 O(n)가 필요하다는 단점이 있다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/MergeSort.md",
+    "is_opening": true
+  },
+  {
+    "category": "알고리즘",
+    "topic": "힙 정렬",
+    "content": "힙 정렬(Heap Sort)의 동작 원리와 특징을 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["최대 힙 구성", "루트(최댓값) 추출 반복", "O(nlogn)", "제자리 정렬", "불안정"],
+    "model_answer": "힙 정렬은 배열로 최대 힙을 구성한 뒤, 루트(최댓값)를 맨 뒤 원소와 교환하고 힙 크기를 줄여 down-heapify를 반복하는 방식이다. 항상 O(n log n)이고 추가 메모리 없이 제자리 정렬이 가능하다. 다만 캐시 효율이 낮고 불안정 정렬이라 실무에서는 퀵/병합만큼 자주 쓰이진 않는다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/HeapSort.md",
+    "is_opening": true
+  },
+  {
+    "category": "알고리즘",
+    "topic": "계수/기수 정렬",
+    "content": "비교 기반이 아닌 계수 정렬/기수 정렬이 O(n)에 가능한 이유는 무엇이고 어떤 제약이 있나요?",
+    "difficulty": 3,
+    "keywords": ["비교 안 함", "계수 정렬(값을 인덱스로 카운트)", "기수 정렬(자릿수별)", "정수·제한된 범위에서만", "비교 정렬 하한 O(nlogn) 회피"],
+    "model_answer": "비교 기반 정렬은 정보 이론적으로 O(n log n)이 하한이지만, 계수·기수 정렬은 값을 비교하지 않고 값 자체를 이용해 O(n)이 가능하다. 계수 정렬은 각 값의 개수를 세어 위치를 정하고, 기수 정렬은 자릿수별로 반복 정렬한다. 대신 값이 정수이고 범위가 크지 않아야 하는 등 데이터 특성에 제약이 있다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/Sort_Counting.md",
+    "is_opening": true
+  },
+  {
+    "category": "알고리즘",
+    "topic": "이분 탐색",
+    "content": "이분 탐색(Binary Search)의 동작 원리와 전제 조건, 시간 복잡도를 설명해주세요.",
+    "difficulty": 1,
+    "keywords": ["정렬된 배열이 전제", "중간값과 비교", "절반씩 탐색 범위 축소", "O(logn)"],
+    "model_answer": "이분 탐색은 정렬된 배열에서 중간 값과 찾는 값을 비교해, 작으면 왼쪽 절반, 크면 오른쪽 절반으로 탐색 범위를 반씩 줄여가는 방법이다. 매 단계 범위가 절반이 되므로 O(log n)이다. 반드시 데이터가 정렬돼 있어야 한다는 전제가 있다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/Binary%20Search.md",
+    "is_opening": true
+  },
+  {
+    "category": "알고리즘",
+    "topic": "DFS와 BFS",
+    "content": "DFS와 BFS의 차이와 각각의 구현 방법, 언제 쓰는지 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["DFS=깊이 우선(스택/재귀)", "BFS=너비 우선(큐)", "DFS: 모든 경로 탐색", "BFS: 최단 경로"],
+    "model_answer": "DFS는 한 경로를 끝까지 파고든 뒤 되돌아오는 깊이 우선 탐색으로 스택이나 재귀로 구현한다. BFS는 가까운(인접한) 노드부터 넓게 퍼져 탐색하는 너비 우선 탐색으로 큐로 구현한다. 모든 경로를 탐색하거나 경로 존재 여부를 볼 땐 DFS, 최소 횟수/최단 거리를 찾을 땐 BFS가 적합하다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/DFS%20%26%20BFS.md",
+    "is_opening": true
+  },
+  {
+    "category": "알고리즘",
+    "topic": "DFS와 BFS",
+    "content": "DFS와 BFS의 시간 복잡도는 그래프 표현 방식에 따라 어떻게 달라지나요?",
+    "difficulty": 2,
+    "keywords": ["인접 리스트 O(V+E)", "인접 행렬 O(V^2)", "V=정점, E=간선"],
+    "model_answer": "두 탐색 모두 그래프 표현 방식에 따라 복잡도가 달라진다. 인접 리스트로 표현하면 각 정점과 간선을 한 번씩 보므로 O(V+E)이다. 인접 행렬로 표현하면 각 정점마다 모든 정점과의 연결을 확인해야 해 O(V²)이다. (V는 정점 수, E는 간선 수)",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/DFS%20%26%20BFS.md",
+    "is_opening": false
+  },
+  {
+    "category": "알고리즘",
+    "topic": "DFS와 BFS",
+    "content": "가중치가 없는 그래프에서 최단 경로를 찾을 때 BFS를 쓰는 이유는 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["가까운 노드부터 레벨 단위 탐색", "처음 도달 = 최단 거리", "모든 간선 가중치 동일(1)"],
+    "model_answer": "BFS는 시작점에서 거리가 가까운(간선 수가 적은) 노드부터 레벨 단위로 방문한다. 모든 간선의 가중치가 같으므로 어떤 노드에 처음 도달했을 때가 곧 최단 거리다. 그래서 미로 최단 경로처럼 가중치 없는 그래프의 최단 거리 문제에 BFS가 쓰인다. (가중치가 있으면 다익스트라를 쓴다.)",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/DFS%20%26%20BFS.md",
+    "is_opening": false
+  },
+  {
+    "category": "알고리즘",
+    "topic": "동적 계획법",
+    "content": "동적 계획법(DP)이란 무엇이고 핵심 아이디어는 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["큰 문제를 작은 문제로 분할", "중복 부분 문제", "최적 부분 구조", "메모이제이션"],
+    "model_answer": "동적 계획법은 복잡한 문제를 작은 하위 문제로 나눠 풀되, 같은 하위 문제를 반복 계산하지 않도록 결과를 저장해 재사용하는 방법이다. '중복되는 부분 문제'와 '최적 부분 구조'라는 두 조건이 있을 때 효과적이다. 예를 들어 피보나치를 단순 재귀로 풀면 O(2ⁿ)이지만, 메모이제이션을 쓰면 O(n)으로 줄어든다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/%EB%8F%99%EC%A0%81%20%EA%B3%84%ED%9A%8D%EB%B2%95%20(Dynamic%20Programming).md",
+    "is_opening": true
+  },
+  {
+    "category": "알고리즘",
+    "topic": "동적 계획법",
+    "content": "동적 계획법과 분할 정복의 차이는 무엇인가요?",
+    "difficulty": 3,
+    "keywords": ["둘 다 작은 문제로 분할", "DP: 부분 문제 겹침→저장·재사용", "분할 정복: 부분 문제 안 겹침"],
+    "model_answer": "둘 다 큰 문제를 작은 하위 문제로 나눠 푸는 점은 같다. 차이는 하위 문제의 중복 여부다. 분할 정복(예: 병합 정렬)은 하위 문제가 서로 겹치지 않아 각각 독립적으로 푼다. 동적 계획법은 하위 문제가 반복해서 겹치므로, 한 번 푼 결과를 저장(메모이제이션)해 재사용함으로써 중복 계산을 없앤다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/%EB%8F%99%EC%A0%81%20%EA%B3%84%ED%9A%8D%EB%B2%95%20(Dynamic%20Programming).md",
+    "is_opening": false
+  },
+  {
+    "category": "알고리즘",
+    "topic": "동적 계획법",
+    "content": "DP의 Top-down 방식과 Bottom-up 방식의 차이를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["Top-down=재귀+메모이제이션", "Bottom-up=반복문+테이블 채우기", "가독성 vs 오버헤드"],
+    "model_answer": "Top-down은 큰 문제부터 재귀로 내려가며 아직 안 푼 하위 문제를 만나면 그때 풀고 메모이제이션으로 저장한다 — 직관적이지만 재귀 호출 오버헤드가 있다. Bottom-up은 가장 작은 문제부터 반복문으로 테이블을 채워 올라간다 — 오버헤드가 적지만 점화식과 순서를 먼저 설계해야 한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/%EB%8F%99%EC%A0%81%20%EA%B3%84%ED%9A%8D%EB%B2%95%20(Dynamic%20Programming).md",
+    "is_opening": false
+  },
+  {
+    "category": "알고리즘",
+    "topic": "그리디",
+    "content": "그리디(Greedy) 알고리즘이란 무엇이고 한계는 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["매 순간 최적 선택", "전역 최적 보장 X", "그리디 선택 속성/최적 부분 구조 필요", "DP와 대비"],
+    "model_answer": "그리디 알고리즘은 매 단계에서 그 순간 가장 좋아 보이는 선택을 하는 방식이다. 구현이 단순하고 빠르지만, 국소 최적의 합이 항상 전역 최적을 보장하지는 않는다. '그리디 선택 속성'과 '최적 부분 구조'가 성립하는 특정 문제(예: 거스름돈, 최소 신장 트리)에서만 정답을 보장하며, 아니면 DP 등을 써야 한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/tree/master/Algorithm",
+    "is_opening": true
+  },
+  {
+    "category": "알고리즘",
+    "topic": "다익스트라",
+    "content": "다익스트라(Dijkstra) 알고리즘의 개념과 용도, 제약을 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["가중치 그래프 최단 경로", "우선순위 큐", "음의 가중치 불가", "O((V+E)logV)"],
+    "model_answer": "다익스트라는 가중치가 있는 그래프에서 한 시작점으로부터 다른 모든 정점까지의 최단 경로를 구하는 알고리즘이다. 아직 확정되지 않은 정점 중 거리가 가장 짧은 것을 우선순위 큐로 골라 인접 정점의 거리를 갱신(완화)한다. 우선순위 큐로 구현하면 O((V+E)log V)이며, 음의 가중치가 있으면 정확하지 않아 쓸 수 없다(그 경우 벨만-포드).",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Algorithm/%EB%8B%A4%EC%9D%B5%EC%8A%A4%ED%8A%B8%EB%9D%BC(Dijkstra).md",
+    "is_opening": true
+  }
+]

@@ -1,0 +1,222 @@
+[
+  {
+    "category": "네트워크",
+    "topic": "OSI 7계층",
+    "content": "OSI 7계층이 무엇이고 각 계층의 역할을 간단히 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["물리-데이터링크-네트워크-전송-세션-표현-응용", "계층화", "캡슐화", "역할 분리"],
+    "model_answer": "OSI 7계층은 네트워크 통신을 7단계로 나눈 표준 모델이다. 물리(비트 전송), 데이터링크(MAC·프레임), 네트워크(IP·라우팅), 전송(TCP/UDP·포트), 세션(연결 관리), 표현(암호화·인코딩), 응용(HTTP 등 사용자 서비스)으로 나뉜다. 계층을 나눠 각 단계의 역할을 독립적으로 관리·교체할 수 있게 한 것이 목적이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/OSI%207%20%EA%B3%84%EC%B8%B5.md",
+    "is_opening": true
+  },
+  {
+    "category": "네트워크",
+    "topic": "OSI 7계층",
+    "content": "OSI 7계층과 TCP/IP 4계층의 차이는 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["OSI=개념 참조 모델", "TCP/IP=실제 구현 모델", "계층 통합", "4계층(네트워크 액세스/인터넷/전송/응용)"],
+    "model_answer": "OSI 7계층은 통신을 이해·설계하기 위한 개념적 참조 모델이고, TCP/IP 4계층은 실제 인터넷에서 쓰이는 구현 중심 모델이다. TCP/IP는 OSI의 물리·데이터링크를 네트워크 액세스로, 세션·표현·응용을 응용 계층으로 합쳐 4계층으로 단순화한 것이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/OSI%207%20%EA%B3%84%EC%B8%B5.md",
+    "is_opening": false
+  },
+  {
+    "category": "네트워크",
+    "topic": "TCP 3-way / 4-way handshake",
+    "content": "TCP 3-way handshake(연결 성립) 과정을 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["SYN", "SYN+ACK", "ACK", "시퀀스 번호", "논리적 연결 성립"],
+    "model_answer": "클라이언트가 서버에 SYN(seq=x)을 보내 연결을 요청한다. 서버는 이를 받고 SYN(seq=y)과 ACK(x+1)를 함께 보내 응답한다. 클라이언트가 다시 ACK(y+1)를 보내면 3번의 교환으로 양방향 연결이 성립한다. 정확한 전송을 보장하기 위한 논리적 접속 과정이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/TCP%203%20way%20handshake%20%26%204%20way%20handshake.md",
+    "is_opening": true
+  },
+  {
+    "category": "네트워크",
+    "topic": "TCP 3-way / 4-way handshake",
+    "content": "TCP 4-way handshake(연결 해제) 과정을 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["FIN", "ACK", "CLOSE_WAIT", "TIME_WAIT", "종료"],
+    "model_answer": "클라이언트가 FIN을 보내 종료를 알리면 서버는 ACK로 응답한다(남은 데이터 전송을 위해 CLOSE_WAIT 상태). 서버가 데이터를 다 보내고 FIN을 보내면 클라이언트가 ACK로 응답한다. 클라이언트는 지연된 패킷을 위해 TIME_WAIT으로 잠시 대기한 뒤 연결을 닫는다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/TCP%203%20way%20handshake%20%26%204%20way%20handshake.md",
+    "is_opening": true
+  },
+  {
+    "category": "네트워크",
+    "topic": "TCP 3-way / 4-way handshake",
+    "content": "연결 해제 시 클라이언트가 TIME_WAIT 상태로 대기하는 이유는 무엇인가요?",
+    "difficulty": 3,
+    "keywords": ["지연 패킷 처리", "마지막 ACK 유실 대비", "이전 연결 데이터 혼선 방지"],
+    "model_answer": "네트워크에 아직 도착하지 않은 지연 패킷이 남아 있을 수 있고, 클라이언트가 보낸 마지막 ACK가 유실되면 서버가 FIN을 재전송할 수 있기 때문이다. TIME_WAIT으로 일정 시간 기다리면 이런 늦은 패킷을 받아 처리하고, 같은 포트로 맺어질 새 연결이 이전 연결의 잔여 패킷과 섞이는 것을 방지한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/TCP%203%20way%20handshake%20%26%204%20way%20handshake.md",
+    "is_opening": false
+  },
+  {
+    "category": "네트워크",
+    "topic": "흐름 제어와 혼잡 제어",
+    "content": "TCP의 흐름 제어(flow control)와 혼잡 제어(congestion control)의 차이를 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["흐름제어=수신자 버퍼 보호", "혼잡제어=네트워크 보호", "슬라이딩 윈도우", "AIMD/느린 시작"],
+    "model_answer": "흐름 제어는 수신자가 처리할 수 있는 양보다 많이 보내 버퍼가 넘치는 것을 막는 것으로, 수신 윈도우 크기를 알려주는 슬라이딩 윈도우 방식을 쓴다. 혼잡 제어는 네트워크 자체가 혼잡해지는 것을 막는 것으로, 느린 시작(slow start)·AIMD 등으로 전송 속도를 조절한다. 즉 흐름 제어는 '수신자 보호', 혼잡 제어는 '네트워크 보호'다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/TCP%20(%ED%9D%90%EB%A6%84%EC%A0%9C%EC%96%B4%ED%98%BC%EC%9E%A1%EC%A0%9C%EC%96%B4).md",
+    "is_opening": true
+  },
+  {
+    "category": "네트워크",
+    "topic": "흐름 제어와 혼잡 제어",
+    "content": "슬라이딩 윈도우(Sliding Window)가 무엇인지 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["윈도우 크기만큼 ACK 없이 전송", "수신 여유에 맞춤", "효율적 전송", "흐름 제어 기법"],
+    "model_answer": "슬라이딩 윈도우는 ACK를 하나씩 기다리지 않고, 수신자가 허용한 윈도우 크기만큼의 패킷을 한꺼번에 보내고 ACK를 받으면 윈도우를 밀며 이어 보내는 기법이다. 수신자의 버퍼 여유(수신 윈도우)에 맞춰 전송량을 조절하므로 흐름 제어를 효율적으로 수행한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/TCP%20(%ED%9D%90%EB%A6%84%EC%A0%9C%EC%96%B4%ED%98%BC%EC%9E%A1%EC%A0%9C%EC%96%B4).md",
+    "is_opening": false
+  },
+  {
+    "category": "네트워크",
+    "topic": "TCP와 UDP",
+    "content": "TCP와 UDP의 차이를 설명해주세요.",
+    "difficulty": 1,
+    "keywords": ["연결형 vs 비연결형", "신뢰성·순서 보장 vs 빠름", "handshake 유무", "헤더 크기"],
+    "model_answer": "TCP는 연결형 프로토콜로 3-way handshake로 연결을 맺고, 순서 보장·재전송·흐름/혼잡 제어로 신뢰성 있는 전송을 한다(대신 느리고 오버헤드 큼). UDP는 비연결형으로 연결 과정 없이 데이터그램을 그냥 보내 빠르고 헤더가 작지만, 순서·도착을 보장하지 않는다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/UDP.md",
+    "is_opening": true
+  },
+  {
+    "category": "네트워크",
+    "topic": "TCP와 UDP",
+    "content": "UDP가 TCP보다 적합한 경우는 어떤 상황인가요?",
+    "difficulty": 2,
+    "keywords": ["실시간성 우선", "스트리밍/게임/VoIP", "DNS 조회", "약간의 손실 허용"],
+    "model_answer": "속도와 실시간성이 신뢰성보다 중요한 경우에 UDP가 적합하다. 실시간 스트리밍·화상통화(VoIP)·온라인 게임처럼 약간의 패킷 손실은 허용하되 지연을 최소화해야 하는 상황, 그리고 짧은 단발성 요청인 DNS 조회 등에 쓰인다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/UDP.md",
+    "is_opening": false
+  },
+  {
+    "category": "네트워크",
+    "topic": "대칭키와 공개키",
+    "content": "대칭키 암호화와 공개키(비대칭키) 암호화의 차이를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["대칭키(같은 키, 빠름, 키 공유 문제)", "공개키(공개/개인키 쌍, 느림, 키 공유 안전)"],
+    "model_answer": "대칭키는 암호화와 복호화에 같은 키를 쓴다. 속도가 빠르지만 키를 안전하게 상대에게 전달하는 문제가 있다. 공개키(비대칭키)는 공개키와 개인키 쌍을 쓰며 공개키로 암호화한 것은 개인키로만 풀 수 있다. 키 공유 문제는 해결되지만 연산이 느리다. 그래서 HTTPS는 둘을 함께 쓴다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/%EB%8C%80%EC%B9%AD%ED%82%A4%20%26%20%EA%B3%B5%EA%B0%9C%ED%82%A4.md",
+    "is_opening": true
+  },
+  {
+    "category": "네트워크",
+    "topic": "대칭키와 공개키",
+    "content": "공개키 암호화로 기밀성과 인증(전자서명)을 각각 어떻게 달성하나요?",
+    "difficulty": 3,
+    "keywords": ["기밀성: 공개키로 암호화→개인키로 복호화", "인증: 개인키로 서명→공개키로 검증"],
+    "model_answer": "기밀성은 보내는 쪽이 수신자의 공개키로 암호화하면 수신자의 개인키로만 풀 수 있으므로 달성된다. 인증(전자서명)은 반대로, 보내는 쪽이 자신의 개인키로 서명하면 누구나 그의 공개키로 검증할 수 있어 '이 사람이 보냈다'는 것이 증명된다. 즉 키 쌍의 방향을 어떻게 쓰느냐에 따라 용도가 달라진다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/%EB%8C%80%EC%B9%AD%ED%82%A4%20%26%20%EA%B3%B5%EA%B0%9C%ED%82%A4.md",
+    "is_opening": false
+  },
+  {
+    "category": "네트워크",
+    "topic": "HTTP와 HTTPS",
+    "content": "HTTP와 HTTPS의 차이는 무엇인가요?",
+    "difficulty": 1,
+    "keywords": ["평문 vs SSL/TLS 암호화", "도청/위장/변조 방지", "인증서", "포트 80 vs 443"],
+    "model_answer": "HTTP는 클라이언트와 서버가 자원을 주고받는 통신 규약인데, 평문으로 통신해 도청·위장·변조에 취약하다. HTTPS는 여기에 SSL/TLS 암호화를 더한 것으로, 통신 내용을 암호화하고 CA 인증서로 상대를 인증해 이 취약점들을 막는다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/HTTP%20%26%20HTTPS.md",
+    "is_opening": true
+  },
+  {
+    "category": "네트워크",
+    "topic": "HTTP와 HTTPS",
+    "content": "HTTP의 보안 취약점 세 가지를 설명해주세요.",
+    "difficulty": 2,
+    "keywords": ["도청(평문 노출)", "위장(상대 미확인)", "변조(무결성 미보장)"],
+    "model_answer": "첫째 도청 — 평문 통신이라 신호를 가로채면 내용이 노출된다. 둘째 위장 — 통신 상대를 확인하지 않아 위장된 상대와 통신할 수 있다. 셋째 변조 — 무결성을 보장하지 않아 중간에 내용이 바뀔 수 있다. HTTPS는 암호화, CA 인증서, 메시지 인증 코드(MAC)/전자서명으로 각각을 방어한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/HTTP%20%26%20HTTPS.md",
+    "is_opening": true
+  },
+  {
+    "category": "네트워크",
+    "topic": "HTTP와 HTTPS",
+    "content": "HTTPS 통신에서 CA 인증서는 어떤 역할을 하나요?",
+    "difficulty": 3,
+    "keywords": ["CA(신뢰된 인증기관)", "서버 공개키 보증", "CA 개인키로 서명한 인증서", "브라우저가 CA 공개키 보유"],
+    "model_answer": "CA(Certificate Authority)는 신뢰할 수 있는 인증기관으로, 서버의 공개키가 진짜임을 보증하는 인증서를 CA의 개인키로 서명해 발급한다. 브라우저는 주요 CA의 공개키를 미리 갖고 있어 인증서를 검증할 수 있고, 이를 통해 위장 서버가 아닌 진짜 서버의 공개키임을 확인한다. 즉 CA는 '이 공개키의 주인이 맞다'를 보증하는 역할이다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/HTTP%20%26%20HTTPS.md",
+    "is_opening": false
+  },
+  {
+    "category": "네트워크",
+    "topic": "TLS/SSL Handshake",
+    "content": "HTTPS(TLS handshake)에서 공개키와 대칭키를 함께 쓰는 이유는 무엇인가요?",
+    "difficulty": 3,
+    "keywords": ["공개키=느림, 키 교환용", "대칭키=빠름, 실제 데이터 암호화", "세션키(대칭키) 안전 교환"],
+    "model_answer": "공개키 암호화는 안전하지만 연산이 느려 모든 데이터를 처리하기엔 비효율적이다. 그래서 handshake 단계에서만 공개키로 대칭키(세션키)를 안전하게 교환하고, 이후 실제 데이터 통신은 빠른 대칭키로 암호화한다. 즉 '키 교환은 공개키, 데이터 암호화는 대칭키'로 안전성과 속도를 모두 얻는다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/TLS%20HandShake.md",
+    "is_opening": true
+  },
+  {
+    "category": "네트워크",
+    "topic": "TLS/SSL Handshake",
+    "content": "TLS handshake의 대략적인 과정을 설명해주세요.",
+    "difficulty": 3,
+    "keywords": ["ClientHello/ServerHello", "인증서 전달·검증", "pre-master-secret 교환", "session key 생성", "대칭키 통신 전환"],
+    "model_answer": "클라이언트가 지원하는 암호 방식 등을 담아 ClientHello를 보내고, 서버는 ServerHello와 인증서를 응답한다. 클라이언트는 인증서를 검증해 서버 공개키를 얻고, pre-master-secret을 서버 공개키로 암호화해 보낸다. 양쪽은 이를 바탕으로 동일한 세션 키(대칭키)를 만들고, 이후 통신은 그 대칭키로 암호화해 진행한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/TLS%20HandShake.md",
+    "is_opening": false
+  },
+  {
+    "category": "네트워크",
+    "topic": "로드 밸런싱",
+    "content": "로드 밸런싱(Load Balancing)이 무엇이고 왜 필요한가요?",
+    "difficulty": 2,
+    "keywords": ["트래픽 분산", "여러 서버", "가용성·확장성", "단일 장애점 완화"],
+    "model_answer": "로드 밸런싱은 들어오는 트래픽을 여러 서버에 분산시키는 기술이다. 한 서버에 부하가 몰리는 것을 막아 응답 속도를 유지하고, 일부 서버가 죽어도 다른 서버가 처리해 가용성을 높인다. 서버를 늘려 처리량을 확장(scale-out)할 수 있게 해준다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/%EB%A1%9C%EB%93%9C%20%EB%B0%B8%EB%9F%B0%EC%8B%B1(Load%20Balancing).md",
+    "is_opening": true
+  },
+  {
+    "category": "네트워크",
+    "topic": "로드 밸런싱",
+    "content": "L4 로드 밸런싱과 L7 로드 밸런싱의 차이는 무엇인가요?",
+    "difficulty": 2,
+    "keywords": ["L4=전송 계층(IP/포트)", "L7=응용 계층(URL/헤더/쿠키)", "콘텐츠 기반 분기"],
+    "model_answer": "L4 로드 밸런싱은 전송 계층에서 IP와 포트 정보만으로 트래픽을 분산하므로 빠르고 단순하다. L7 로드 밸런싱은 응용 계층에서 URL·헤더·쿠키 같은 내용을 보고 분산하므로, 특정 경로는 특정 서버로 보내는 등 콘텐츠 기반의 세밀한 분기가 가능하다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/%EB%A1%9C%EB%93%9C%20%EB%B0%B8%EB%9F%B0%EC%8B%B1(Load%20Balancing).md",
+    "is_opening": false
+  },
+  {
+    "category": "네트워크",
+    "topic": "로드 밸런싱",
+    "content": "대표적인 로드 밸런싱 알고리즘에는 어떤 것들이 있나요?",
+    "difficulty": 2,
+    "keywords": ["라운드 로빈", "가중 라운드 로빈", "least connection(최소 연결)", "IP 해시"],
+    "model_answer": "라운드 로빈은 서버에 순서대로 돌아가며 분배하고, 가중 라운드 로빈은 서버 성능에 가중치를 둔다. 최소 연결(least connection)은 현재 연결 수가 가장 적은 서버로 보내고, IP 해시는 클라이언트 IP를 해싱해 항상 같은 서버로 보내(세션 유지에 유리) 분배한다.",
+    "source_url": "https://github.com/gyoogle/tech-interview-for-developer/blob/master/Computer%20Science/Network/%EB%A1%9C%EB%93%9C%20%EB%B0%B8%EB%9F%B0%EC%8B%B1(Load%20Balancing).md",
+    "is_opening": false
+  },
+  {
+    "category": "네트워크",
+    "topic": "GET과 POST",
+    "content": "HTTP의 GET과 POST 방식의 차이는 무엇인가요?",
+    "difficulty": 1,
+    "keywords": ["GET=조회, 쿼리스트링", "POST=생성/변경, 바디", "멱등성/캐시", "데이터 노출"],
+    "model_answer": "GET은 데이터를 조회할 때 쓰며 파라미터를 URL 쿼리스트링에 담아 보내고, 캐시가 가능하며 멱등(같은 요청 반복해도 결과 동일)하다. POST는 데이터를 생성·변경할 때 쓰며 값을 요청 본문(body)에 담아 보내고, 일반적으로 캐시되지 않으며 멱등하지 않다. GET은 URL에 노출되므로 민감 정보엔 부적합하다.",
+    "source_url": "https://github.com/jbee37142/Interview_Question_for_Beginner/tree/main/Network",
+    "is_opening": true
+  },
+  {
+    "category": "네트워크",
+    "topic": "웹 통신 흐름",
+    "content": "브라우저에 URL을 입력하면 화면이 뜨기까지 무슨 일이 일어나나요?",
+    "difficulty": 2,
+    "keywords": ["DNS 조회(도메인→IP)", "TCP 연결(3-way)", "HTTP(S) 요청/응답", "렌더링"],
+    "model_answer": "먼저 DNS를 통해 도메인 이름을 IP 주소로 변환한다. 그 IP로 TCP 3-way handshake로 연결을 맺고(HTTPS면 TLS handshake 추가), HTTP 요청을 보낸다. 서버가 HTML 등 응답을 반환하면 브라우저가 이를 파싱해 CSS·JS·이미지 등 추가 자원을 요청하며 화면을 렌더링한다.",
+    "source_url": "https://github.com/jbee37142/Interview_Question_for_Beginner/tree/main/Network",
+    "is_opening": true
+  },
+  {
+    "category": "네트워크",
+    "topic": "DNS",
+    "content": "DNS(Domain Name System)가 무엇이고 어떤 역할을 하나요?",
+    "difficulty": 2,
+    "keywords": ["도메인→IP 변환", "계층적 구조", "캐싱", "네임서버"],
+    "model_answer": "DNS는 사람이 읽기 쉬운 도메인 이름(example.com)을 실제 통신에 필요한 IP 주소로 변환해주는 시스템이다. 루트·TLD·권한 네임서버로 이어지는 계층적 구조로 질의가 진행되며, 반복 조회 비용을 줄이기 위해 각 단계에서 결과를 캐싱한다. 덕분에 우리는 IP를 외우지 않고 도메인으로 접속할 수 있다.",
+    "source_url": "https://github.com/jbee37142/Interview_Question_for_Beginner/tree/main/Network",
+    "is_opening": true
+  }
+]
