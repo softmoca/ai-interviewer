@@ -9,10 +9,10 @@ import com.aiinterviewer.domain.session.QaLog;
 import com.aiinterviewer.domain.session.QaLogRepository;
 import com.aiinterviewer.domain.user.User;
 import com.aiinterviewer.domain.user.UserRepository;
+import com.aiinterviewer.llm.LlmCallException;
 import com.aiinterviewer.llm.LlmClient;
 import com.aiinterviewer.llm.dto.FollowUpResult;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -75,7 +75,13 @@ public class SessionService {
                         first.getDifficulty(), opening.getSeq()));
     }
 
-    /** 사용자 답변을 기록하고 꼬리질문 1~2개를 생성해 저장한다(진행 중 세션만, 소유자만). */
+    /**
+     * 사용자 답변을 기록하고 <b>다음 꼬리질문 하나</b>를 제시한다(진행 중 세션만, 소유자만).
+     *
+     * <p>순차 큐잉(D36): 세션에 보관된 꼬리질문이 있으면 LLM 호출 없이 그것을 제시하고, 없으면
+     * LLM으로 1~2개를 생성해 첫 번째를 제시하고 두 번째는 세션에 보관한다. 이렇게 하면 화면에
+     * 질문이 한 번에 하나씩만 나오고, 보관분이 소진되기 전에는 새 질문을 생성하지 않는다.
+     */
     @Transactional
     public AnswerResult submitAnswer(Long userId, Long sessionId, String content) {
         InterviewSession session = sessionAccessGuard.getOwned(userId, sessionId);
@@ -85,17 +91,34 @@ public class SessionService {
         int answerSeq = (int) qaLogRepository.countBySessionId(sessionId) + 1;
         QaLog answer = qaLogRepository.save(QaLog.userAnswer(session, content, answerSeq));
 
-        List<QaLog> transcript = qaLogRepository.findBySessionIdOrderBySeqAsc(sessionId);
+        String question = nextFollowUp(session);
+        QaLog nextQuestion = qaLogRepository.save(QaLog.followUp(session, question, answerSeq + 1));
+
+        return new AnswerResult(answer.getId(), answerSeq,
+                new AnswerResult.FollowUpView(nextQuestion.getId(), nextQuestion.getSeq(),
+                        nextQuestion.getContent()),
+                session.getStatus());
+    }
+
+    /**
+     * 다음 꼬리질문을 결정한다. 세션에 보관분이 있으면 그것을 꺼내고(LLM 호출 없음), 없으면
+     * LLM으로 1~2개를 생성해 첫 번째를 반환하고 두 번째는 세션에 보관한다(D36).
+     */
+    private String nextFollowUp(InterviewSession session) {
+        if (session.hasPendingFollowUp()) {
+            return session.takePendingFollowUp();
+        }
+        List<QaLog> transcript = qaLogRepository.findBySessionIdOrderBySeqAsc(session.getId());
         List<Question> pool = questionPool(session, transcript);
         FollowUpResult followUp = llmClient.generateFollowUp(promptFactory.build(pool, transcript));
-
-        List<AnswerResult.FollowUpView> views = new ArrayList<>();
-        int seq = answerSeq;
-        for (String question : followUp.followUpQuestions()) {
-            QaLog saved = qaLogRepository.save(QaLog.followUp(session, question, ++seq));
-            views.add(new AnswerResult.FollowUpView(saved.getId(), saved.getSeq(), saved.getContent()));
+        List<String> questions = followUp.followUpQuestions();
+        if (questions.isEmpty()) {
+            throw new LlmCallException("꼬리질문이 생성되지 않았습니다.");
         }
-        return new AnswerResult(answer.getId(), answerSeq, views, session.getStatus());
+        if (questions.size() > 1) {
+            session.stashFollowUp(questions.get(1));
+        }
+        return questions.get(0);
     }
 
     /** 세션을 정상 종료한다(소유자만). 진행 중이 아니면 도메인이 거부한다. */
