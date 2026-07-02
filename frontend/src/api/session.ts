@@ -3,6 +3,7 @@ import type {
   AnswerResponse,
   SessionDetail,
   SessionStatusResponse,
+  SessionSummary,
   StartSessionResponse,
 } from './types';
 
@@ -34,4 +35,9 @@ export function completeSession(sessionId: number): Promise<SessionStatusRespons
 /** 세션 상세(설정·상태 + 대화 이력) */
 export function getSession(sessionId: number): Promise<SessionDetail> {
   return apiRequest<SessionDetail>(`/sessions/${sessionId}`);
+}
+
+/** 내 면접 기록 목록(최근 순) */
+export function listSessions(): Promise<SessionSummary[]> {
+  return apiRequest<SessionSummary[]>('/sessions');
 }

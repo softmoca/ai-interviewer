@@ -83,6 +83,14 @@ export interface SessionStatusResponse {
   endedAt: string | null;
 }
 
+/** 세션 목록(내 면접 기록) 항목 */
+export interface SessionSummary {
+  sessionId: number;
+  status: SessionStatus;
+  startedAt: string | null;
+  endedAt: string | null;
+}
+
 // --- 평가 리포트 (docs/아키텍처.md 5.2, 결정사항 D28) ---
 
 export interface ConceptScore {

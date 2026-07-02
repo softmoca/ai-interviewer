@@ -18,6 +18,9 @@ export function HomePage() {
       <Link to="/sessions/new" className="button-link">
         새 면접 시작
       </Link>
+      <Link to="/sessions" className="button-link outline">
+        내 면접 기록
+      </Link>
       <button type="button" className="secondary" onClick={logout}>
         로그아웃
       </button>
