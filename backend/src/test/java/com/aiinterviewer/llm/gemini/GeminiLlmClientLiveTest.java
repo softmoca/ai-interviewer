@@ -2,6 +2,7 @@ package com.aiinterviewer.llm.gemini;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.aiinterviewer.llm.dto.EvaluationResult;
 import com.aiinterviewer.llm.dto.FollowUpResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -38,5 +39,27 @@ class GeminiLlmClientLiveTest {
 
         assertThat(result.followUpQuestions()).isNotEmpty();
         assertThat(result.followUpQuestions().get(0)).isNotBlank();
+    }
+
+    @Test
+    @DisplayName("실제 Gemini가 구조화된 평가 리포트를 반환한다")
+    void evaluatesFromRealGemini() {
+        GeminiProperties properties = new GeminiProperties(
+                System.getenv("GEMINI_API_KEY"),
+                "gemini-2.5-flash",
+                "https://generativelanguage.googleapis.com/v1beta");
+        GeminiLlmClient client = new GeminiLlmClient(properties, new ObjectMapper());
+
+        String prompt = """
+                너는 CS 기술 면접 평가자다. 대화: 면접관 "프로세스와 스레드의 차이는?" /
+                지원자 "프로세스는 독립 메모리, 스레드는 공유 메모리입니다." 를 평가하라.
+                반드시 아래 JSON 형식으로만 답하라(점수 1~5 정수):
+                {"evaluations":[{"concept":"...","accuracy":4,"depth":3,"missed_keywords":["..."],"model_answer":"..."}],"overall_comment":"..."}
+                """;
+
+        EvaluationResult result = client.evaluate(prompt);
+
+        assertThat(result.evaluations()).isNotEmpty();
+        assertThat(result.evaluations().get(0).concept()).isNotBlank();
     }
 }

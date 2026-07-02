@@ -35,8 +35,7 @@ public class GeminiLlmClient implements LlmClient {
 
     @Override
     public FollowUpResult generateFollowUp(String prompt) {
-        String json = requestJson(prompt);
-        GeminiFollowUpPayload payload = parse(json);
+        GeminiFollowUpPayload payload = parse(requestJson(prompt), GeminiFollowUpPayload.class);
         List<String> questions = payload.followUpQuestions() == null ? List.of()
                 : payload.followUpQuestions().stream()
                         .filter(q -> q != null && !q.isBlank())
@@ -51,8 +50,18 @@ public class GeminiLlmClient implements LlmClient {
 
     @Override
     public EvaluationResult evaluate(String prompt) {
-        // 평가는 다음 슬라이스에서 구현한다(범위 밖).
-        throw new UnsupportedOperationException("Gemini 평가 생성 미구현");
+        GeminiEvaluationPayload payload = parse(requestJson(prompt), GeminiEvaluationPayload.class);
+        List<EvaluationResult.ConceptEvaluation> evaluations = payload.evaluations() == null ? List.of()
+                : payload.evaluations().stream()
+                        .filter(e -> e != null && e.concept() != null && !e.concept().isBlank())
+                        .map(e -> new EvaluationResult.ConceptEvaluation(e.concept(), e.accuracy(),
+                                e.depth(), e.missedKeywords() == null ? List.of() : e.missedKeywords(),
+                                e.modelAnswer()))
+                        .toList();
+        if (evaluations.isEmpty()) {
+            throw new LlmCallException("LLM이 평가 결과를 반환하지 않았습니다.");
+        }
+        return new EvaluationResult(evaluations, payload.overallComment());
     }
 
     /** Gemini generateContent 호출 → 응답 텍스트(JSON 문자열) 추출. */
@@ -89,9 +98,9 @@ public class GeminiLlmClient implements LlmClient {
         return candidate.content().parts().get(0).text();
     }
 
-    private GeminiFollowUpPayload parse(String json) {
+    private <T> T parse(String json, Class<T> type) {
         try {
-            return objectMapper.readValue(stripCodeFence(json), GeminiFollowUpPayload.class);
+            return objectMapper.readValue(stripCodeFence(json), type);
         } catch (Exception e) {
             throw new LlmCallException("Gemini 응답 JSON 파싱에 실패했습니다.", e);
         }
@@ -144,5 +153,22 @@ public class GeminiLlmClient implements LlmClient {
             String reason,
             @JsonProperty("within_pool") Boolean withinPool
     ) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private record GeminiEvaluationPayload(
+            List<ConceptPayload> evaluations,
+            @JsonProperty("overall_comment") String overallComment
+    ) {
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        record ConceptPayload(
+                String concept,
+                int accuracy,
+                int depth,
+                @JsonProperty("missed_keywords") List<String> missedKeywords,
+                @JsonProperty("model_answer") String modelAnswer
+        ) {
+        }
     }
 }
