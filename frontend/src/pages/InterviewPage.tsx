@@ -118,7 +118,9 @@ export function InterviewPage() {
       {status === 'COMPLETED' ? (
         <div className="done">
           <p>면접이 종료되었습니다. 수고하셨습니다! 🎉</p>
-          <p className="muted">평가 리포트 화면은 다음 슬라이스에서 연결됩니다.</p>
+          <Link to={`/sessions/${sessionId}/evaluation`} className="button-link">
+            평가 리포트 보기
+          </Link>
           <Link to="/">홈으로</Link>
         </div>
       ) : (
