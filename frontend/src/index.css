@@ -94,6 +94,36 @@ button.secondary {
   margin-top: 0.75rem;
 }
 
+/* 음성 입력(STT — D37) */
+.mic-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+button.mic {
+  background: #e4e7eb;
+  color: #1f2933;
+  align-self: flex-start;
+}
+
+button.mic.recording {
+  background: #d6336c;
+  color: #fff;
+  animation: mic-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes mic-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+
 .button-link {
   display: block;
   text-align: center;
