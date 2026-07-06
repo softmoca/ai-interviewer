@@ -58,7 +58,8 @@ export interface FollowUpView {
 export interface AnswerResponse {
   answerLogId: number;
   answerSeq: number;
-  followUps: FollowUpView[];
+  /** 다음에 제시할 꼬리질문 하나(순차 큐잉 — 결정사항 D36). 없으면 null */
+  nextQuestion: FollowUpView | null;
   status: SessionStatus;
 }
 

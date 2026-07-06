@@ -66,8 +66,8 @@ class SessionIntegrationTest {
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.answerSeq").value(2))
-                .andExpect(jsonPath("$.followUps.length()").value(1))
-                .andExpect(jsonPath("$.followUps[0].seq").value(3));
+                .andExpect(jsonPath("$.nextQuestion.content", notNullValue()))
+                .andExpect(jsonPath("$.nextQuestion.seq").value(3));
 
         // 조회 — 대화 이력 3건(오프닝 + 답변 + 꼬리질문)
         mockMvc.perform(get("/api/sessions/" + sessionId)

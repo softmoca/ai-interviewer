@@ -65,6 +65,14 @@ public class InterviewSession extends BaseTimeEntity {
 
     private LocalDateTime endedAt;
 
+    /**
+     * 아직 제시하지 않은 다음 꼬리질문(큐 슬롯). LLM이 한 답변에 꼬리질문 2개를 주면 두 번째를
+     * 여기 보관했다가 다음 답변 때 제시한다(결정사항 D36 — 순차 큐잉). LLM은 최대 2개를 주므로
+     * 슬롯 하나면 충분하다. 비어 있으면 다음 답변에서 새 꼬리질문을 생성한다.
+     */
+    @Column(columnDefinition = "TEXT")
+    private String pendingFollowUp;
+
     private InterviewSession(User user, Set<Long> categoryIds, boolean randomAll,
                              Integer questionCount, Integer difficulty, LocalDateTime startedAt) {
         this.user = DomainGuard.requireNotNull(user, "user");
@@ -114,6 +122,28 @@ public class InterviewSession extends BaseTimeEntity {
     /** 정상 종료된 세션인지. 평가는 완료된 세션에만 허용한다. */
     public boolean isCompleted() {
         return this.status == SessionStatus.COMPLETED;
+    }
+
+    // --- 꼬리질문 큐 (D36): LLM이 준 두 번째 꼬리질문을 보관했다가 다음 답변 때 제시 ---
+
+    /** 아직 제시하지 않은 보관 꼬리질문이 있는지. */
+    public boolean hasPendingFollowUp() {
+        return pendingFollowUp != null && !pendingFollowUp.isBlank();
+    }
+
+    /** 다음에 제시할 꼬리질문을 보관한다(슬롯 1개). */
+    public void stashFollowUp(String question) {
+        this.pendingFollowUp = DomainGuard.requireNotBlank(question, "question");
+    }
+
+    /** 보관해 둔 꼬리질문을 꺼내고 슬롯을 비운다(consume). 없으면 예외. */
+    public String takePendingFollowUp() {
+        if (!hasPendingFollowUp()) {
+            throw new IllegalStateException("보관된 꼬리질문이 없습니다.");
+        }
+        String question = this.pendingFollowUp;
+        this.pendingFollowUp = null;
+        return question;
     }
 
     private void finish(SessionStatus target, LocalDateTime endedAt) {

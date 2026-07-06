@@ -172,4 +172,40 @@ class InterviewSessionTest {
                     .isInstanceOf(IllegalStateException.class);
         }
     }
+
+    @Nested
+    @DisplayName("꼬리질문 큐: 보관 → 소진")
+    class FollowUpQueue {
+
+        @Test
+        @DisplayName("보관한 꼬리질문을 꺼내면 슬롯이 비워진다")
+        void stashThenTake() {
+            InterviewSession session = new InterviewSession();
+
+            assertSoftly(softly -> softly.assertThat(session.hasPendingFollowUp()).isFalse());
+            session.stashFollowUp("두 번째 꼬리질문");
+
+            assertSoftly(softly -> {
+                softly.assertThat(session.hasPendingFollowUp()).isTrue();
+                softly.assertThat(session.takePendingFollowUp()).isEqualTo("두 번째 꼬리질문");
+                softly.assertThat(session.hasPendingFollowUp()).isFalse(); // 소진됨
+            });
+        }
+
+        @Test
+        @DisplayName("보관분이 없을 때 꺼내면 예외")
+        void takeWhenEmptyThrows() {
+            InterviewSession session = new InterviewSession();
+
+            assertThatThrownBy(session::takePendingFollowUp)
+                    .isInstanceOf(IllegalStateException.class);
+        }
+
+        @Test
+        @DisplayName("빈 꼬리질문은 보관을 거부한다")
+        void rejectsBlankStash() {
+            assertThatThrownBy(() -> new InterviewSession().stashFollowUp(" "))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
 }
