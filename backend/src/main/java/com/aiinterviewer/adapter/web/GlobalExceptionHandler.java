@@ -2,6 +2,7 @@ package com.aiinterviewer.adapter.web;
 
 import com.aiinterviewer.application.auth.AuthenticationFailedException;
 import com.aiinterviewer.application.auth.DuplicateEmailException;
+import com.aiinterviewer.application.auth.SocialAuthenticationException;
 import com.aiinterviewer.application.session.CategoryNotFoundException;
 import com.aiinterviewer.application.session.NoAvailableQuestionException;
 import com.aiinterviewer.application.session.SessionAccessDeniedException;
@@ -38,6 +39,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAuthenticationFailed(AuthenticationFailedException e) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse("AUTHENTICATION_FAILED", e.getMessage()));
+    }
+
+    /** 소셜 로그인 실패(토큰 무효/이메일 미검증/미지원 프로바이더) → 401 (D38). */
+    @ExceptionHandler(SocialAuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleSocialAuthentication(SocialAuthenticationException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse("SOCIAL_AUTHENTICATION_FAILED", e.getMessage()));
     }
 
     @ExceptionHandler({SessionNotFoundException.class, CategoryNotFoundException.class,

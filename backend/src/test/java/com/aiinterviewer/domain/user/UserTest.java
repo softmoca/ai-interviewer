@@ -66,4 +66,53 @@ class UserTest {
             assertThat(user.authenticate("wrong-pass", FAKE_ENCRYPTOR)).isFalse();
         }
     }
+
+    @Nested
+    @DisplayName("소셜 로그인 (D38)")
+    class Social {
+
+        @Test
+        @DisplayName("registerSocial: 비밀번호 없이 프로바이더 신원으로 가입 — 자체 로그인은 불가")
+        void registersSocialUser() {
+            User user = User.registerSocial("me@gmail.com", "구글닉", "google", "google-sub-123");
+
+            assertThat(user.getEmail()).isEqualTo("me@gmail.com");
+            assertThat(user.getNickname()).isEqualTo("구글닉");
+            assertThat(user.getProvider()).isEqualTo("google");
+            assertThat(user.getProviderId()).isEqualTo("google-sub-123");
+            // 비밀번호가 없으므로 어떤 원문으로도 자체 로그인되지 않는다.
+            assertThat(user.authenticate("anything", FAKE_ENCRYPTOR)).isFalse();
+        }
+
+        @Test
+        @DisplayName("linkSocial: 기존 계정에 프로바이더 신원을 연결한다")
+        void linksSocialToExistingUser() {
+            User user = User.register("me@test.com", "password1", "닉", FAKE_ENCRYPTOR);
+
+            user.linkSocial("google", "google-sub-123");
+
+            assertThat(user.getProvider()).isEqualTo("google");
+            assertThat(user.getProviderId()).isEqualTo("google-sub-123");
+            // 연동 후에도 기존 비밀번호 로그인은 그대로 가능하다.
+            assertThat(user.authenticate("password1", FAKE_ENCRYPTOR)).isTrue();
+        }
+
+        @Test
+        @DisplayName("linkSocial: 이미 다른 프로바이더에 연결됐으면 거부한다")
+        void rejectsRelinkToDifferentProvider() {
+            User user = User.registerSocial("me@gmail.com", "닉", "google", "google-sub-123");
+
+            assertThatThrownBy(() -> user.linkSocial("kakao", "kakao-999"))
+                    .isInstanceOf(IllegalStateException.class);
+        }
+
+        @Test
+        @DisplayName("linkSocial: 필수값(provider/providerId)이 비면 거부한다")
+        void rejectsBlankLinkArgs() {
+            User user = User.register("me@test.com", "password1", "닉", FAKE_ENCRYPTOR);
+
+            assertThatThrownBy(() -> user.linkSocial(" ", "id")).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> user.linkSocial("google", " ")).isInstanceOf(IllegalArgumentException.class);
+        }
+    }
 }
