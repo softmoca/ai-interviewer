@@ -100,6 +100,30 @@ class AuthIntegrationTest {
     }
 
     @Test
+    @DisplayName("구글 로그인 엔드포인트는 공개이며, 유효하지 않은 ID 토큰은 401(SOCIAL_AUTHENTICATION_FAILED)")
+    void googleLoginWithInvalidTokenIsUnauthorized() throws Exception {
+        // 인증 없이 접근 가능(permitAll)해야 컨트롤러까지 도달 → 검증 실패로 401.
+        // (security가 막았다면 커스텀 code 없이 401만 왔을 것이다.)
+        mockMvc.perform(post("/api/auth/google")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"idToken":"not-a-real-google-token"}
+                                """))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.code").value("SOCIAL_AUTHENTICATION_FAILED"));
+    }
+
+    @Test
+    @DisplayName("구글 로그인에 idToken이 없으면 400")
+    void googleLoginWithoutTokenIsBadRequest() throws Exception {
+        mockMvc.perform(post("/api/auth/google")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+    }
+
+    @Test
     @DisplayName("잘못된 비밀번호 로그인은 401")
     void loginWithWrongPasswordIsUnauthorized() throws Exception {
         mockMvc.perform(post("/api/auth/signup")

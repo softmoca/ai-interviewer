@@ -33,6 +33,14 @@ jwt:
   secret: ${JWT_SECRET:dev-local-jwt-secret-please-change-in-production-0123456789}
   access-token-validity-seconds: ${JWT_ACCESS_TOKEN_VALIDITY_SECONDS:3600}
 
+# 소셜 로그인 설정 (Google — 결정사항 D38)
+# - client-id: 구글 OAuth 클라이언트 ID. ID 토큰 검증의 대상(audience)으로 쓴다.
+#   공개값이지만(프론트 번들에도 노출) 일관성을 위해 .env / 환경변수(GOOGLE_CLIENT_ID)로 주입.
+#   비어 있으면 구글 로그인만 비활성(모든 토큰 거부)이고 앱은 정상 기동한다.
+oauth:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:}
+
 # LLM 연동 설정 (결정사항 D18)
 # - 개발용 프로바이더: Google Gemini (gemini-2.5-flash, 무료 티어)
 # - API 키는 절대 커밋 금지. .env / 환경변수(GEMINI_API_KEY)로만 주입.

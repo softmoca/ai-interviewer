@@ -39,7 +39,7 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // 공개: 가입/로그인/헬스체크. /api/auth/me 등 그 외는 인증 필요.
-                        .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/health").permitAll()
+                        .requestMatchers("/api/auth/signup", "/api/auth/login", "/api/auth/google", "/api/health").permitAll()
                         .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(handling -> handling

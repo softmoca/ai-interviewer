@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * <ul>
  *   <li>POST /api/auth/signup — 회원가입</li>
  *   <li>POST /api/auth/login — 로그인(토큰 발급)</li>
+ *   <li>POST /api/auth/google — 구글 소셜 로그인(ID 토큰 검증 후 토큰 발급, D38)</li>
  *   <li>GET  /api/auth/me — 현재 로그인 사용자(보호됨)</li>
  * </ul>
  */
@@ -42,6 +43,12 @@ public class AuthController {
     @PostMapping("/login")
     public TokenResponse login(@Valid @RequestBody LoginRequest request) {
         LoginResult result = authService.login(request.email(), request.password());
+        return TokenResponse.from(result);
+    }
+
+    @PostMapping("/google")
+    public TokenResponse googleLogin(@Valid @RequestBody GoogleLoginRequest request) {
+        LoginResult result = authService.socialLogin("google", request.idToken());
         return TokenResponse.from(result);
     }
 
