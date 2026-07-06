@@ -23,10 +23,13 @@ function fakeWin(overrides: Record<string, unknown>): Window {
   return overrides as unknown as Window;
 }
 
-// SpeechRecognitionEvent.results 흉내 — 배열형 인덱스 접근 구조.
-function fakeResults(text: string, isFinal: boolean) {
-  const result = { 0: { transcript: text }, length: 1, isFinal };
-  return { resultIndex: 0, results: { 0: result, length: 1 } };
+// SpeechRecognitionEvent 흉내 — 배열형 인덱스 접근 구조를 items로 만든다.
+function resultsEvent(items: Array<{ transcript: string; isFinal: boolean }>, resultIndex = 0) {
+  const results: Record<number | 'length', unknown> = { length: items.length };
+  items.forEach((it, i) => {
+    results[i] = { 0: { transcript: it.transcript }, length: 1, isFinal: it.isFinal };
+  });
+  return { resultIndex, results };
 }
 
 describe('isSpeechInputSupported', () => {
@@ -67,12 +70,66 @@ describe('createWebSpeechProvider', () => {
     expect(rec.start).toHaveBeenCalled();
     expect(rec.lang).toBe('ko-KR');
     expect(rec.interimResults).toBe(true);
+    expect(rec.continuous).toBe(true);
 
-    rec.onresult?.(fakeResults('스택은', false));
+    rec.onresult?.(resultsEvent([{ transcript: '스택은', isFinal: false }]));
     expect(onTranscript).toHaveBeenCalledWith({ text: '스택은', isFinal: false });
 
     session.stop();
     expect(rec.stop).toHaveBeenCalled();
+  });
+
+  it('확정 텍스트는 이어지는 발화에 누적되고, 중간 결과는 뒤에 임시로 붙는다', () => {
+    const instances: FakeRecognition[] = [];
+    class Tracking extends FakeRecognition {
+      constructor() {
+        super();
+        instances.push(this);
+      }
+    }
+    const provider = createWebSpeechProvider(fakeWin({ SpeechRecognition: Tracking }));
+    const onTranscript = vi.fn();
+    provider!.start({ onTranscript, onError: vi.fn(), onEnd: vi.fn() });
+    const rec = instances[0];
+
+    rec.onresult?.(resultsEvent([{ transcript: '스택은 ', isFinal: true }]));
+    expect(onTranscript).toHaveBeenLastCalledWith({ text: '스택은 ', isFinal: true });
+
+    // 다음 이벤트(resultIndex=1)의 중간 결과가 앞선 확정분에 이어붙는다.
+    rec.onresult?.(resultsEvent(
+      [
+        { transcript: '스택은 ', isFinal: true },
+        { transcript: '배열', isFinal: false },
+      ],
+      1,
+    ));
+    expect(onTranscript).toHaveBeenLastCalledWith({ text: '스택은 배열', isFinal: false });
+  });
+
+  it('사용자가 멈추기 전 브라우저가 끊기면(onend) 자동으로 다시 시작한다', () => {
+    const instances: FakeRecognition[] = [];
+    class Tracking extends FakeRecognition {
+      constructor() {
+        super();
+        instances.push(this);
+      }
+    }
+    const provider = createWebSpeechProvider(fakeWin({ SpeechRecognition: Tracking }));
+    const onEnd = vi.fn();
+    const session = provider!.start({ onTranscript: vi.fn(), onError: vi.fn(), onEnd });
+    const rec = instances[0];
+    expect(rec.start).toHaveBeenCalledTimes(1);
+
+    // 브라우저가 세션을 끊음 → 사용자가 멈춘 게 아니므로 재시작, onEnd는 아직 호출 안 함
+    rec.onend?.();
+    expect(rec.start).toHaveBeenCalledTimes(2);
+    expect(onEnd).not.toHaveBeenCalled();
+
+    // 사용자가 멈춘 뒤 끊기면 재시작하지 않고 onEnd로 종료를 알린다
+    session.stop();
+    rec.onend?.();
+    expect(rec.start).toHaveBeenCalledTimes(2);
+    expect(onEnd).toHaveBeenCalledTimes(1);
   });
 
   it('권한 거부(not-allowed) 오류를 onError로 전달한다', () => {
