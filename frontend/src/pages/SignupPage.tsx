@@ -3,9 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signup } from '../api/auth';
 import { ApiError } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
+import { GoogleLoginButton } from '../auth/GoogleLoginButton';
 
 export function SignupPage() {
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,6 +26,16 @@ export function SignupPage() {
       setError(err instanceof ApiError ? err.message : '회원가입에 실패했습니다.');
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  async function handleGoogle(idToken: string) {
+    setError(null);
+    try {
+      await loginWithGoogle(idToken);
+      navigate('/', { replace: true });
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '구글 로그인에 실패했습니다.');
     }
   }
 
@@ -68,6 +79,7 @@ export function SignupPage() {
           {submitting ? '가입 중…' : '회원가입'}
         </button>
       </form>
+      <GoogleLoginButton onCredential={handleGoogle} onError={setError} />
       <p>
         이미 계정이 있으신가요? <Link to="/login">로그인</Link>
       </p>

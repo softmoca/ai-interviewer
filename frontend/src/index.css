@@ -94,6 +94,13 @@ button.secondary {
   margin-top: 0.75rem;
 }
 
+/* 구글 소셜 로그인(D38) — GIS 버튼을 가운데 정렬 */
+.google-login {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
 /* 음성 입력(STT — D37) */
 .mic-row {
   display: flex;
