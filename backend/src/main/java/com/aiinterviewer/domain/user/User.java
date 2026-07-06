@@ -62,6 +62,30 @@ public class User extends BaseTimeEntity {
     }
 
     /**
+     * 소셜 로그인 사용자를 가입시킨다(결정사항 D38). 비밀번호가 없으므로 자체 로그인은 불가하고
+     * (해당 프로바이더로만 로그인), 프로바이더 신원({@code provider}/{@code providerId})을 함께 저장한다.
+     */
+    public static User registerSocial(String email, String nickname, String provider, String providerId) {
+        User user = new User(email, null, nickname);
+        user.linkSocial(provider, providerId);
+        return user;
+    }
+
+    /**
+     * 기존 사용자에 소셜 프로바이더 신원을 연결한다(예: 이메일/비번 계정에 구글 연동). 이미 다른
+     * 프로바이더에 연결돼 있으면 거부해 계정이 조용히 가로채이지 않게 한다(Tell, Don't Ask).
+     */
+    public void linkSocial(String provider, String providerId) {
+        requireNotBlank(provider, "provider");
+        requireNotBlank(providerId, "providerId");
+        if (this.provider != null && !this.provider.equals(provider)) {
+            throw new IllegalStateException("이미 다른 소셜 계정에 연결된 사용자입니다.");
+        }
+        this.provider = provider;
+        this.providerId = providerId;
+    }
+
+    /**
      * 원문 비밀번호가 이 사용자의 저장된 비밀번호와 일치하는지 확인한다(Tell, Don't Ask —
      * 해시를 밖으로 꺼내지 않고 대조 판단을 사용자 객체가 수행).
      */
