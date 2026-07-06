@@ -84,25 +84,53 @@ export function createWebSpeechProvider(win: Window, lang = 'ko-KR'): SttProvide
       const recognition = new Ctor();
       recognition.lang = lang;
       recognition.interimResults = true; // 말하는 즉시 초안이 채워지도록 중간 결과 수신
-      recognition.continuous = false; // 한 번의 발화 단위(사용자가 멈추면 종료)
+      recognition.continuous = true; // 침묵으로 자동 종료하지 않고, 사용자가 멈출 때까지 계속 듣는다
       recognition.maxAlternatives = 1;
 
+      // 확정(final) 텍스트는 재시작을 넘어 계속 누적한다. 브라우저가 세션을 끊고 다시
+      // 시작하면 results 목록이 초기화되므로, 확정분을 여기 모아 두어야 이어붙일 수 있다.
+      let finalText = '';
+      let stopped = false; // 사용자가 명시적으로 멈췄는가(자동 재시작 여부 판단)
+
       recognition.onresult = (event) => {
-        // 세션 시작 후 모든 조각을 누적해 현재까지의 전체 텍스트를 만든다.
-        let text = '';
-        let isFinal = true;
-        for (let i = 0; i < event.results.length; i += 1) {
-          text += event.results[i][0].transcript;
-          if (!event.results[i].isFinal) isFinal = false;
+        // 이번 이벤트의 새 결과(resultIndex부터)만 훑어 확정분은 누적, 중간분은 임시로 붙인다.
+        let interim = '';
+        for (let i = event.resultIndex; i < event.results.length; i += 1) {
+          const result = event.results[i];
+          if (result.isFinal) finalText += result[0].transcript;
+          else interim += result[0].transcript;
         }
-        handlers.onTranscript({ text, isFinal });
+        handlers.onTranscript({ text: finalText + interim, isFinal: interim === '' });
       };
-      recognition.onerror = (event) => handlers.onError(toErrorCode(event.error));
-      recognition.onend = () => handlers.onEnd();
+
+      recognition.onerror = (event) => {
+        const code = toErrorCode(event.error);
+        // 치명 오류(권한 거부·마이크 없음)만 사용자에게 알리고 종료한다. no-speech·network 등
+        // 일시적 오류는 onend의 자동 재시작에 맡겨 계속 듣게 한다.
+        if (code === 'not-allowed' || code === 'audio-capture') {
+          stopped = true;
+          handlers.onError(code);
+        }
+      };
+
+      recognition.onend = () => {
+        if (stopped) {
+          handlers.onEnd();
+          return;
+        }
+        // 브라우저가 침묵/세션 길이 한계로 끊어도 사용자가 멈출 때까지 이어서 듣는다.
+        try {
+          recognition.start();
+        } catch {
+          stopped = true;
+          handlers.onEnd();
+        }
+      };
 
       recognition.start();
       return {
         stop() {
+          stopped = true;
           recognition.stop();
         },
       };

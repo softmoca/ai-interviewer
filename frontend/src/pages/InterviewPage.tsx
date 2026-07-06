@@ -170,7 +170,7 @@ export function InterviewPage() {
                     {speech.recording ? '● 녹음 중지' : '🎤 음성으로 답변'}
                   </button>
                   {speech.recording && (
-                    <span className="muted">말하면 입력창에 채워집니다 · 제출 전 수정할 수 있어요</span>
+                    <span className="muted">말하면 입력창에 채워집니다 · 끝나면 중지를 누르세요(제출 전 수정 가능)</span>
                   )}
                 </div>
               )}
